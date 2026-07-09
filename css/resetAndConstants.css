@@ -1,0 +1,26 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    list-style: none;
+    text-decoration: none;
+}
+
+:root {
+    --blue-electric: #004BFF;
+    --blue-marine-dark: #0A1128;
+    --blue-soft: #33a8dc;
+    --pink-power: #ff2f78;
+    --yellow-bright: #ffd700;
+    --green-bright: #00b25a;
+    --red-carmine: #E60000;
+    --white-pure: #FFFFFF;
+    --gray-dark: #121827;
+    --gray-soft: #2D334D;
+    --purple-dark: #a04393;
+    --font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: var(--purple-dark)
+}

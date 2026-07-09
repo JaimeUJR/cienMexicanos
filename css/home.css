@@ -1,0 +1,147 @@
+@import url('resetAndConstants.css');
+
+html,
+body {
+    min-height: 100%;
+    font-family: var(--font-family);
+    background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.15), transparent 25%),
+        radial-gradient(circle at bottom right, rgba(255, 215, 0, 0.18), transparent 22%),
+        linear-gradient(180deg, #0a1028 0%, #141c3c 45%, #0b1328 100%);
+    color: var(--white-pure);
+}
+
+body {
+    padding: 32px 16px;
+}
+
+.contenedor {
+    position: relative;
+    width: "80%";
+    height: 450px;
+    background: var(--purple-dark);
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.rect {
+    position: absolute;
+}
+
+.rosa {
+    width: 245px;
+    height: 120px;
+    background: var(--pink-power);
+    top: 160px;
+    left: 350px;
+}
+
+.azul {
+    width: 135px;
+    height: 120px;
+    background: var(--blue-soft);
+    top: 120px;
+    left: 570px;
+}
+
+.amarillo {
+    width: 180px;
+    height: 128px;
+    background: var(--yellow-bright);
+    top: 215px;
+    left: 545px;
+}
+
+.verde {
+    width: 225px;
+    height: 105px;
+    background: var(--green-bright);
+    top: 260px;
+    left: 290px;
+}
+
+.titulo {
+    position: absolute;
+    top: 135px;
+    left: 275px;
+    transform: rotate(-10deg);
+    text-align: center;
+    z-index: 20;
+}
+
+.numero {
+    font-size: 105px;
+    font-weight: 900;
+    color: white;
+    -webkit-text-stroke: 3px var(--purple-dark);
+    text-shadow:
+        5px 5px 0 #000,
+        2px 2px 0 rgba(255, 255, 255, .3);
+    line-height: 0.9;
+}
+
+.texto {
+    font-size: 58px;
+    font-weight: 900;
+    color: white;
+    letter-spacing: 2px;
+    -webkit-text-stroke: 2px var(--purple-dark);
+    text-shadow: 4px 4px 0 #000;
+}
+
+.linea1 {
+    margin-top: -5px;
+}
+
+.linea2 {
+    margin-top: -10px;
+    margin-left: 130px;
+}
+
+.page-shell {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.navigation-cards {
+    display: grid;
+    gap: 18px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: 32px;
+}
+
+.nav-card {
+    display: block;
+    padding: 26px;
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 22px 40px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.nav-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.nav-card h2 {
+    font-size: 1.35rem;
+    margin-bottom: 10px;
+}
+
+.nav-card p {
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.7;
+}
+
+@media (max-width: 900px) {
+    .navigation-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 560px) {
+    body {
+        padding: 18px 12px;
+    }
+}
