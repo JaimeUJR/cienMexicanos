@@ -40,7 +40,73 @@
                 <p>Configura rondas, equipos y opciones del tablero.</p>
             </a>
         </section>
+
+        <section class="games-section">
+            <h2>Partidas Disponibles</h2>
+            <div id="games-container" class="games-container">
+                <!-- Partidas se cargarán aquí -->
+            </div>
+        </section>
     </main>
+
+    <script src="./js/storage.js"></script>
+    <script>
+        window.initializeStorage();
+        
+        function loadGamesInHome() {
+            const games = window.getGames();
+            const container = document.getElementById('games-container');
+            
+            if (!games || games.length === 0) {
+                container.innerHTML = '<p class="empty-state">No hay partidas disponibles. Crea una nueva para empezar.</p>';
+                return;
+            }
+
+            container.innerHTML = games.map(game => {
+                const createdDate = new Date(game.createdAt).toLocaleDateString('es-MX');
+                const teams = game.teams ? `${game.teams[0].name} vs ${game.teams[1].name}` : 'Equipos no configurados';
+                
+                return `
+                    <div class="game-card">
+                        <div class="game-card-header">
+                            <h3>${game.name}</h3>
+                            <span class="game-date">${createdDate}</span>
+                        </div>
+                        <div class="game-card-body">
+                            <p class="teams">${teams}</p>
+                            <p class="rounds">Rondas: ${game.config.roundsCount}</p>
+                        </div>
+                        <div class="game-card-actions">
+                            <button class="btn btn-play" data-game-id="${game.id}">Jugar</button>
+                            <button class="btn btn-hide" data-game-id="${game.id}">Ocultar</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Agregar event listeners a los botones de jugar
+            document.querySelectorAll('.btn-play').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const gameId = this.dataset.gameId;
+                    window.setActiveGame(gameId);
+                    alert('Partida activada: ' + gameId);
+                    // TODO: Navegar a página de gameplay
+                });
+            });
+
+            // Agregar event listeners a los botones de ocultar
+            document.querySelectorAll('.btn-hide').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const gameId = this.dataset.gameId;
+                    // TODO: Implementar funcionalidad de ocultar
+                    alert('Funcionalidad de ocultar (próximamente)');
+                });
+            });
+        }
+
+        // Cargar partidas al abrir el home
+        loadGamesInHome();
+    </script>
 </body>
 
 </html>

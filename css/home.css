@@ -147,3 +147,147 @@ body {
         padding: 18px 12px;
     }
 }
+
+/* Games Section */
+.games-section {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.games-section h2 {
+    font-size: 1.5rem;
+    color: var(--white-pure);
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.games-container {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+}
+
+.game-card {
+    display: flex;
+    flex-direction: column;
+    padding: 18px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.game-card:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.game-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.game-card-header h3 {
+    font-size: 1.15rem;
+    color: var(--yellow-bright);
+    margin: 0;
+    flex: 1;
+}
+
+.game-date {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    white-space: nowrap;
+    margin-left: 8px;
+}
+
+.game-card-body {
+    flex: 1;
+    margin-bottom: 14px;
+}
+
+.game-card-body p {
+    margin: 6px 0;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.95rem;
+}
+
+.teams {
+    color: var(--green-bright) !important;
+    font-weight: 500;
+}
+
+.rounds {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.empty-state {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+    padding: 24px;
+    font-size: 1rem;
+}
+
+.game-card-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    min-width: 100px;
+}
+
+.btn-play {
+    background: linear-gradient(135deg, var(--green-bright), #0fb069);
+    color: white;
+}
+
+.btn-play:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(15, 176, 105, 0.3);
+}
+
+.btn-hide {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-hide:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+@media (max-width: 768px) {
+    .games-container {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .games-container {
+        grid-template-columns: 1fr;
+    }
+
+    .game-card-actions {
+        gap: 8px;
+    }
+
+    .btn {
+        min-width: 80px;
+        padding: 6px 12px;
+        font-size: 0.85rem;
+    }
+}
