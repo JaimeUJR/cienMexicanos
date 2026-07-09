@@ -16,11 +16,15 @@ body {
 
 .container {
     position: relative;
-    width: "80%";
+    width: "90%";
     height: 450px;
     background: var(--purple-dark);
     overflow: hidden;
     border-radius: 10px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .rect {
@@ -32,7 +36,9 @@ body {
     height: 120px;
     background: var(--pink-power);
     top: 160px;
-    left: 350px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-left: -85px;
 }
 
 .blue {
@@ -40,7 +46,9 @@ body {
     height: 120px;
     background: var(--blue-soft);
     top: 120px;
-    left: 570px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-left: 95px;
 }
 
 .yellow {
@@ -48,7 +56,9 @@ body {
     height: 128px;
     background: var(--yellow-bright);
     top: 215px;
-    left: 545px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-left: 70px;
 }
 
 .green {
@@ -56,16 +66,19 @@ body {
     height: 105px;
     background: var(--green-bright);
     top: 260px;
-    left: 290px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-left: -125px;
 }
 
 .title {
     position: absolute;
-    top: 135px;
-    left: 275px;
-    transform: rotate(-10deg);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-10deg);
     text-align: center;
     z-index: 20;
+    width: 100%;
 }
 
 .number {
