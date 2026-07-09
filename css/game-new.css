@@ -1,60 +1,69 @@
 @import url('resetAndConstants.css');
 
+/* ==================== PAGE LEVEL ==================== */
+body {
+    height: 100vh;
+    overflow: hidden;
+}
+
+html {
+    height: 100vh;
+    overflow: hidden;
+}
+
 /* ==================== GENERAL ==================== */
 .game-page {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
     background: radial-gradient(circle at top left, rgba(255, 0, 255, 0.4), transparent 30%),
         radial-gradient(circle at bottom right, rgba(138, 43, 226, 0.3), transparent 30%),
         linear-gradient(135deg, #8b00ff 0%, #ff00ff 25%, #9b00ff 50%, #ff1493 75%, #8b00ff 100%);
     color: var(--white-pure);
     font-family: var(--font-family);
+    position: relative;
 }
 
-/* ==================== HEADER ==================== */
+/* ==================== HEADER - REMOVED ==================== */
 .game-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 30px;
-    background: rgba(0, 0, 0, 0.4);
-    border-bottom: 3px solid var(--pink-power);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    display: none;
 }
 
-.header-info h1 {
-    font-size: 24px;
-    font-weight: 900;
-    color: var(--yellow-bright);
-    text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.8);
-    margin: 0;
-    letter-spacing: 1px;
+.header-info {
+    display: none;
 }
 
-.header-info p {
-    font-size: 14px;
-    color: var(--gray-soft);
-    margin: 5px 0 0 0;
-}
-
-.btn-close {
-    background: var(--pink-power);
-    border: 2px solid var(--pink-power);
+/* ==================== CLOSE BUTTON IN CORNER ==================== */
+.btn-close-corner {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    background: var(--red-carmine);
+    border: 2px solid var(--yellow-bright);
     color: var(--white-pure);
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     font-size: 24px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
 }
 
-.btn-close:hover {
-    background: var(--red-carmine);
-    border-color: var(--red-carmine);
-    transform: scale(1.1);
+.btn-close-corner:hover {
+    background: var(--yellow-bright);
+    color: var(--red-carmine);
+    transform: scale(1.15);
+}
+
+.btn-close {
+    display: none;
 }
 
 /* ==================== GAME BOARD ==================== */
@@ -63,13 +72,14 @@
     grid-template-columns: 90px 1fr 90px;
     gap: 12px;
     flex: 1;
-    padding: 10px;
-    max-width: 100%;
+    padding: 8px;
+    max-width: 80%;
     margin: 0 auto;
-    width: 100%;
+    width: 80%;
     align-items: start;
     position: relative;
-    padding-top: 120px;
+    padding-top: 12px;
+    overflow: hidden;
 }
 
 /* ==================== TEAM PANELS ==================== */
@@ -160,11 +170,11 @@
     background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.9));
     border: 8px solid #e60000;
     border-radius: 10px;
-    padding: 12px 35px;
+    padding: 11px 7px;
     box-shadow: 0 0 40px rgba(230, 0, 0, 0.5), inset 0 0 20px rgba(255, 215, 0, 0.05);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     margin: 0;
     min-height: 0;
 }
@@ -260,21 +270,21 @@
 /* Display del contador - Tope */
 .score-display.arcade-top {
     position: absolute;
-    top: -38px;
+    top: -32px;
     left: 50%;
     transform: translateX(-50%);
-    width: 200px;
+    width: 180px;
     text-align: center;
-    padding: 10px 14px;
+    padding: 8px 12px;
     background: radial-gradient(circle at center, #1a4a8f, #0d2555);
     border: 3px solid var(--yellow-bright);
-    border-radius: 16px;
+    border-radius: 12px;
     box-shadow: 0 0 35px rgba(255, 215, 0, 0.4), inset 0 0 15px rgba(255, 215, 0, 0.1);
     z-index: 12;
 }
 
 .score-display span {
-    font-size: 42px;
+    font-size: 36px;
     font-weight: 900;
     color: var(--yellow-bright);
     text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.8);
@@ -286,14 +296,14 @@
 /* Área de pregunta */
 .question-area {
     text-align: center;
-    padding: 10px;
+    padding: 8px 10px;
     background: rgba(255, 255, 255, 0.03);
     border-radius: 4px;
-    margin-top: 8px;
+    margin-top: 6px;
 }
 
 .question-area h2 {
-    font-size: 20px;
+    font-size: 18px;
     color: var(--white-pure);
     margin: 0;
     text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.8);
@@ -313,20 +323,21 @@
     display: flex;
     flex-direction: column;
     gap: 0;
-    padding: 18px 15px;
+    padding: 14px 6px;
 }
 
 /* Items de respuesta - HORIZONTAL CON LÍNEAS PUNTEADAS */
 .answer-item {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 0;
     padding: 8px 0;
     background: transparent;
     border: none;
     cursor: pointer;
     position: relative;
     min-height: 40px;
+    justify-content: space-between;
 }
 
 /* Número - Grande y amarillo */
@@ -348,13 +359,14 @@
     gap: 0;
     flex: 1;
     min-width: 0;
+    margin-right: 12px;
 }
 
 /* Nombre de respuesta - Amarillo, visible */
 .answer-text {
     color: var(--yellow-bright);
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 20px;
+    font-weight: 700;
     white-space: nowrap;
     text-shadow: 1.5px 1.5px 0 rgba(0, 0, 0, 0.8);
     flex-shrink: 0;
@@ -379,16 +391,17 @@
 
 /* Puntos - Amarillo a la derecha */
 .answer-points {
-    font-size: 18px;
-    font-weight: 900;
+    font-size: 20px;
+    font-weight: 700;
     color: var(--yellow-bright);
     text-shadow: 1.5px 1.5px 0 rgba(0, 0, 0, 0.8);
-    min-width: 40px;
+    min-width: 50px;
     text-align: right;
     font-family: 'Courier New', monospace;
     letter-spacing: 0.5px;
     white-space: nowrap;
     flex-shrink: 0;
+    margin-left: auto;
 }
 
 /* Estados - Ningún cambio visual en correcto */
@@ -430,17 +443,17 @@
 /* ==================== CONSOLA DE JUGADOR ==================== */
 .player-console {
     display: flex;
-    gap: 10px;
+    gap: 8px;
 }
 
 .answer-input-hidden {
     flex: 1;
-    padding: 12px 15px;
+    padding: 10px 12px;
     background: rgba(0, 0, 0, 0.5);
     border: 2px solid var(--green-bright);
-    border-radius: 6px;
+    border-radius: 4px;
     color: var(--white-pure);
-    font-size: 14px;
+    font-size: 13px;
     font-family: var(--font-family);
 }
 
@@ -451,15 +464,15 @@
 }
 
 .btn-submit-answer {
-    padding: 12px 20px;
+    padding: 10px 16px;
     background: linear-gradient(135deg, var(--green-bright), #00944f);
     border: 2px solid var(--green-bright);
     color: var(--white-pure);
     font-weight: 700;
-    border-radius: 6px;
+    border-radius: 4px;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-size: 14px;
+    font-size: 13px;
     text-transform: uppercase;
 }
 
@@ -477,20 +490,20 @@
 /* ==================== BOTONES DE CONTROL ==================== */
 .game-controls {
     display: flex;
-    gap: 15px;
+    gap: 10px;
     justify-content: center;
 }
 
 .btn-action {
-    padding: 12px 25px;
+    padding: 10px 18px;
     background: linear-gradient(135deg, var(--yellow-bright), #ffed4e);
     border: 2px solid var(--yellow-bright);
     color: #000;
     font-weight: 700;
-    border-radius: 6px;
+    border-radius: 4px;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-size: 14px;
+    font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -598,43 +611,22 @@
 /* ==================== RESPONSIVE ==================== */
 @media (max-width: 1200px) {
     .arcade-border {
-        padding: 15px 40px;
+        padding: 15px 10px;
         margin: 25px 5px;
-    }
-
-    .score-display.arcade-top {
-        width: 220px;
-        padding: 10px 12px;
-    }
-
-    .score-display span {
-        font-size: 48px;
-    }
-
-    .answer-number {
-        font-size: 42px;
-        min-width: 65px;
-    }
-
-    .answer-text {
-        font-size: 18px;
-    }
-
-    .answer-points {
-        font-size: 20px;
-        min-width: 45px;
     }
 
     .game-board {
         grid-template-columns: 85px 1fr 85px;
         gap: 15px;
         padding: 12px;
+        width: 80%;
+        max-width: 80%;
     }
 }
 
 @media (max-width: 1024px) {
     .arcade-border {
-        padding: 12px 30px;
+        padding: 12px 8px;
     }
 
     .score-display.arcade-top {
@@ -653,12 +645,12 @@
     }
 
     .answer-text {
-        font-size: 17px;
+        font-size: 20px;
     }
 
     .answer-points {
-        font-size: 18px;
-        min-width: 42px;
+        font-size: 20px;
+        min-width: 48px;
     }
 
     .team-badge {
@@ -676,6 +668,8 @@
     .game-board {
         grid-template-columns: 1fr;
         gap: 15px;
+        width: 85%;
+        max-width: 85%;
     }
 
     .team-panel {
@@ -703,12 +697,12 @@
     }
 
     .arcade-border {
-        padding: 10px 25px;
+        padding: 10px 8px;
         margin: 20px 5px;
     }
 
     .answers-list.arcade-grid {
-        padding: 20px 15px;
+        padding: 20px 8px;
     }
 
     .arcade-border::before,
@@ -728,12 +722,12 @@
     }
 
     .answer-text {
-        font-size: 16px;
+        font-size: 18px;
     }
 
     .answer-points {
-        font-size: 16px;
-        min-width: 40px;
+        font-size: 18px;
+        min-width: 42px;
     }
 
     .team-badge {
@@ -779,10 +773,12 @@
     .game-board {
         padding: 10px 5px;
         gap: 10px;
+        width: 90%;
+        max-width: 90%;
     }
 
     .arcade-border {
-        padding: 8px 15px;
+        padding: 8px 4px;
         border: 8px solid #e60000;
         margin: 15px 2px;
         gap: 10px;
@@ -806,7 +802,7 @@
     }
 
     .answers-list.arcade-grid {
-        padding: 15px 10px;
+        padding: 15px 5px;
         gap: 0;
     }
 
@@ -817,7 +813,7 @@
     }
 
     .answer-text {
-        font-size: 14px;
+        font-size: 15px;
     }
 
     .answer-content::after {
@@ -826,8 +822,8 @@
     }
 
     .answer-points {
-        font-size: 14px;
-        min-width: 35px;
+        font-size: 15px;
+        min-width: 36px;
     }
 
     .team-badge {

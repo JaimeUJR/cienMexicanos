@@ -35,10 +35,10 @@ function updateGameUI() {
     const otherTeam = game.teams[1 - currentTeamIndex];
     const round = game.rounds[currentRoundIndex];
 
-    // Actualizar encabezado
-    document.getElementById('game-title').textContent = game.name;
-    document.getElementById('round-info').textContent = 
-        `Ronda ${currentRoundIndex + 1} de ${game.rounds.length} • ${currentTeam.name}`;
+    // Header removido - elementos no existen
+    // document.getElementById('game-title').textContent = game.name;
+    // document.getElementById('round-info').textContent = 
+    //     `Ronda ${currentRoundIndex + 1} de ${game.rounds.length} • ${currentTeam.name}`;
 
     // Actualizar equipos
     document.getElementById('team1-name').textContent = game.teams[0].name;
@@ -74,9 +74,9 @@ function renderCurrentRound() {
             <div class="${classes.join(' ')}" data-answer-id="${answer.id}">
                 <span class="answer-number">${index + 1}.</span>
                 <div class="answer-content">
-                    <span class="answer-text">${answer.text || '---'}</span>
-                    <span class="answer-points">${answer.points}</span>
+                    <span class="answer-text" style="display: ${answer.revealed ? 'inline' : 'none'};">${answer.text || '---'}</span>
                 </div>
+                <span class="answer-points" style="display: ${answer.revealed ? 'inline-block' : 'none'};">${answer.points}</span>
             </div>
         `;
     }).join('');
