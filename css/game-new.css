@@ -1,0 +1,893 @@
+@import url('resetAndConstants.css');
+
+/* ==================== GENERAL ==================== */
+.game-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: radial-gradient(circle at top left, rgba(255, 0, 255, 0.4), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(138, 43, 226, 0.3), transparent 30%),
+        linear-gradient(135deg, #8b00ff 0%, #ff00ff 25%, #9b00ff 50%, #ff1493 75%, #8b00ff 100%);
+    color: var(--white-pure);
+    font-family: var(--font-family);
+}
+
+/* ==================== HEADER ==================== */
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    background: rgba(0, 0, 0, 0.4);
+    border-bottom: 3px solid var(--pink-power);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.header-info h1 {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--yellow-bright);
+    text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.8);
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+.header-info p {
+    font-size: 14px;
+    color: var(--gray-soft);
+    margin: 5px 0 0 0;
+}
+
+.btn-close {
+    background: var(--pink-power);
+    border: 2px solid var(--pink-power);
+    color: var(--white-pure);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-close:hover {
+    background: var(--red-carmine);
+    border-color: var(--red-carmine);
+    transform: scale(1.1);
+}
+
+/* ==================== GAME BOARD ==================== */
+.game-board {
+    display: grid;
+    grid-template-columns: 90px 1fr 90px;
+    gap: 12px;
+    flex: 1;
+    padding: 10px;
+    max-width: 100%;
+    margin: 0 auto;
+    width: 100%;
+    align-items: start;
+    position: relative;
+    padding-top: 120px;
+}
+
+/* ==================== TEAM PANELS ==================== */
+.team-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    padding: 0;
+    justify-self: start;
+}
+
+.team-panel.team-left {
+    border-left: none;
+    padding-left: 0;
+    margin-left: 0;
+}
+
+.team-panel.team-right {
+    border-right: none;
+    padding-right: 0;
+    margin-right: 0;
+}
+
+.team-badge {
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, #1e3a8f, #0d1f4a);
+    border: 4px solid var(--yellow-bright);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.6), inset 0 0 20px rgba(0, 0, 0, 0.9);
+    position: relative;
+    z-index: 3;
+}
+
+.badge-score {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--yellow-bright);
+    text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.8);
+    z-index: 1;
+}
+
+.badge-score {
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--yellow-bright);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    z-index: 1;
+}
+
+.team-info {
+    text-align: center;
+}
+
+.team-info h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--green-bright);
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.total-score {
+    font-size: 11px;
+    color: var(--gray-soft);
+    margin: 2px 0 0 0;
+}
+
+/* ==================== GAME CONTENT ==================== */
+.game-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+/* ==================== ARCADE BORDER ==================== */
+.arcade-border {
+    position: relative;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.9));
+    border: 8px solid #e60000;
+    border-radius: 10px;
+    padding: 12px 35px;
+    box-shadow: 0 0 40px rgba(230, 0, 0, 0.5), inset 0 0 20px rgba(255, 215, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+    min-height: 0;
+}
+
+/* Bolas doradas - Borde superior */
+.arcade-border::before {
+    content: '';
+    position: absolute;
+    top: -18px;
+    left: -8px;
+    right: -8px;
+    height: 32px;
+    background-image: repeating-radial-gradient(
+        circle at 30px center,
+        #ffed4e 0,
+        #ffed4e 11px,
+        #ffd700 11px,
+        #ffd700 13px,
+        transparent 13px,
+        transparent 60px
+    );
+    background-size: 60px 100%;
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.7));
+    z-index: 5;
+}
+
+/* Bolas doradas - Borde inferior */
+.arcade-border::after {
+    content: '';
+    position: absolute;
+    bottom: -18px;
+    left: -8px;
+    right: -8px;
+    height: 32px;
+    background-image: repeating-radial-gradient(
+        circle at 30px center,
+        #ffed4e 0,
+        #ffed4e 11px,
+        #ffd700 11px,
+        #ffd700 13px,
+        transparent 13px,
+        transparent 60px
+    );
+    background-size: 60px 100%;
+    filter: drop-shadow(0 -3px 6px rgba(0, 0, 0, 0.7));
+    z-index: 5;
+}
+
+/* Círculos en borde izquierdo */
+.arcade-border .side-decoration-left {
+    position: absolute;
+    left: -30px;
+    top: -8px;
+    bottom: -8px;
+    width: 28px;
+    background-image: repeating-radial-gradient(
+        circle at center 30px,
+        #ffed4e 0,
+        #ffed4e 10px,
+        #ffd700 10px,
+        #ffd700 12px,
+        transparent 12px,
+        transparent 60px
+    );
+    background-size: 100% 60px;
+    filter: drop-shadow(2px 0 4px rgba(0, 0, 0, 0.7));
+    z-index: 4;
+    pointer-events: none;
+}
+
+/* Círculos en borde derecho */
+.arcade-border .side-decoration-right {
+    position: absolute;
+    right: -30px;
+    top: -8px;
+    bottom: -8px;
+    width: 28px;
+    background-image: repeating-radial-gradient(
+        circle at center 30px,
+        #ffed4e 0,
+        #ffed4e 10px,
+        #ffd700 10px,
+        #ffd700 12px,
+        transparent 12px,
+        transparent 60px
+    );
+    background-size: 100% 60px;
+    filter: drop-shadow(-2px 0 4px rgba(0, 0, 0, 0.7));
+    z-index: 4;
+    pointer-events: none;
+}
+
+/* Display del contador - Tope */
+.score-display.arcade-top {
+    position: absolute;
+    top: -38px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    text-align: center;
+    padding: 10px 14px;
+    background: radial-gradient(circle at center, #1a4a8f, #0d2555);
+    border: 3px solid var(--yellow-bright);
+    border-radius: 16px;
+    box-shadow: 0 0 35px rgba(255, 215, 0, 0.4), inset 0 0 15px rgba(255, 215, 0, 0.1);
+    z-index: 12;
+}
+
+.score-display span {
+    font-size: 42px;
+    font-weight: 900;
+    color: var(--yellow-bright);
+    text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.8);
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+    margin: 0;
+}
+
+/* Área de pregunta */
+.question-area {
+    text-align: center;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.question-area h2 {
+    font-size: 20px;
+    color: var(--white-pure);
+    margin: 0;
+    text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.8);
+}
+
+/* ==================== TABLERO ARCADE CON LÍNEAS PUNTEADAS ==================== */
+.answers-area.arcade-board {
+    position: relative;
+    background: #000;
+    border: none;
+    padding: 0;
+    margin: 0;
+    flex: 1;
+}
+
+.answers-list.arcade-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 18px 15px;
+}
+
+/* Items de respuesta - HORIZONTAL CON LÍNEAS PUNTEADAS */
+.answer-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    min-height: 40px;
+}
+
+/* Número - Grande y amarillo */
+.answer-number {
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--yellow-bright);
+    min-width: 55px;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.9);
+    font-family: 'Arial Black', sans-serif;
+    flex-shrink: 0;
+    margin-right: 4px;
+}
+
+/* Contenedor flex para nombre + puntos */
+.answer-content {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex: 1;
+    min-width: 0;
+}
+
+/* Nombre de respuesta - Amarillo, visible */
+.answer-text {
+    color: var(--yellow-bright);
+    font-size: 16px;
+    font-weight: 600;
+    white-space: nowrap;
+    text-shadow: 1.5px 1.5px 0 rgba(0, 0, 0, 0.8);
+    flex-shrink: 0;
+    letter-spacing: 0.3px;
+}
+
+/* Líneas punteadas conectoras */
+.answer-content::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background-image: repeating-linear-gradient(
+        to right,
+        var(--yellow-bright),
+        var(--yellow-bright) 2px,
+        transparent 2px,
+        transparent 4px
+    );
+    margin: 0 6px;
+    min-width: 20px;
+}
+
+/* Puntos - Amarillo a la derecha */
+.answer-points {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--yellow-bright);
+    text-shadow: 1.5px 1.5px 0 rgba(0, 0, 0, 0.8);
+    min-width: 40px;
+    text-align: right;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Estados - Ningún cambio visual en correcto */
+.answer-item.revealed {
+    background: transparent;
+}
+
+.answer-item.revealed .answer-text,
+.answer-item.revealed .answer-points {
+    color: var(--yellow-bright);
+}
+
+/* Estados - Incorrecta con X roja */
+.answer-item.incorrect {
+    background: transparent;
+}
+
+.answer-item.incorrect .answer-text,
+.answer-item.incorrect .answer-points {
+    color: var(--yellow-bright);
+}
+
+.answer-item.incorrect::before {
+    content: '✕';
+    position: absolute;
+    right: -50px;
+    font-size: 44px;
+    font-weight: bold;
+    color: var(--red-carmine);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    animation: rotateIn 0.4s ease;
+}
+
+@keyframes rotateIn {
+    0% { transform: rotateZ(-45deg); opacity: 0; }
+    100% { transform: rotateZ(0deg); opacity: 1; }
+}
+
+/* ==================== CONSOLA DE JUGADOR ==================== */
+.player-console {
+    display: flex;
+    gap: 10px;
+}
+
+.answer-input-hidden {
+    flex: 1;
+    padding: 12px 15px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid var(--green-bright);
+    border-radius: 6px;
+    color: var(--white-pure);
+    font-size: 14px;
+    font-family: var(--font-family);
+}
+
+.answer-input-hidden:focus {
+    outline: none;
+    border-color: var(--yellow-bright);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.btn-submit-answer {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, var(--green-bright), #00944f);
+    border: 2px solid var(--green-bright);
+    color: var(--white-pure);
+    font-weight: 700;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.btn-submit-answer:hover:not(:disabled) {
+    background: linear-gradient(135deg, #00d470, var(--green-bright));
+    box-shadow: 0 4px 15px rgba(0, 178, 94, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn-submit-answer:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ==================== BOTONES DE CONTROL ==================== */
+.game-controls {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.btn-action {
+    padding: 12px 25px;
+    background: linear-gradient(135deg, var(--yellow-bright), #ffed4e);
+    border: 2px solid var(--yellow-bright);
+    color: #000;
+    font-weight: 700;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-action:hover:not(:disabled) {
+    background: linear-gradient(135deg, #ffed4e, var(--yellow-bright));
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn-action:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-action.secondary {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--pink-power);
+    color: var(--white-pure);
+}
+
+.btn-action.secondary:hover:not(:disabled) {
+    background: rgba(255, 47, 120, 0.2);
+    box-shadow: 0 4px 15px rgba(255, 47, 120, 0.3);
+}
+
+/* ==================== MODALES ==================== */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: radial-gradient(circle at top left, rgba(20, 28, 60, 0.95), rgba(10, 16, 40, 0.95));
+    border: 3px solid var(--pink-power);
+    border-radius: 15px;
+    padding: 40px;
+    text-align: center;
+    max-width: 500px;
+    box-shadow: 0 0 40px rgba(255, 47, 120, 0.5);
+}
+
+.modal-content h2 {
+    font-size: 32px;
+    color: var(--yellow-bright);
+    margin: 0 0 20px 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.final-scores {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 20px 0 30px 0;
+}
+
+.final-score-item {
+    padding: 15px;
+    background: rgba(0, 178, 94, 0.1);
+    border: 2px solid var(--green-bright);
+    border-radius: 8px;
+    font-size: 18px;
+    color: var(--green-bright);
+    font-weight: 700;
+}
+
+.final-score-item.winner {
+    background: rgba(255, 215, 0, 0.1);
+    border-color: var(--yellow-bright);
+    color: var(--yellow-bright);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.btn-primary {
+    padding: 15px 35px;
+    background: linear-gradient(135deg, var(--green-bright), #00944f);
+    border: 2px solid var(--green-bright);
+    color: var(--white-pure);
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    text-transform: uppercase;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #00d470, var(--green-bright));
+    box-shadow: 0 4px 20px rgba(0, 178, 94, 0.5);
+    transform: translateY(-3px);
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 1200px) {
+    .arcade-border {
+        padding: 15px 40px;
+        margin: 25px 5px;
+    }
+
+    .score-display.arcade-top {
+        width: 220px;
+        padding: 10px 12px;
+    }
+
+    .score-display span {
+        font-size: 48px;
+    }
+
+    .answer-number {
+        font-size: 42px;
+        min-width: 65px;
+    }
+
+    .answer-text {
+        font-size: 18px;
+    }
+
+    .answer-points {
+        font-size: 20px;
+        min-width: 45px;
+    }
+
+    .game-board {
+        grid-template-columns: 85px 1fr 85px;
+        gap: 15px;
+        padding: 12px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .arcade-border {
+        padding: 12px 30px;
+    }
+
+    .score-display.arcade-top {
+        width: 200px;
+        font-size: 14px;
+        top: -42px;
+    }
+
+    .score-display span {
+        font-size: 42px;
+    }
+
+    .answer-number {
+        font-size: 38px;
+        min-width: 60px;
+    }
+
+    .answer-text {
+        font-size: 17px;
+    }
+
+    .answer-points {
+        font-size: 18px;
+        min-width: 42px;
+    }
+
+    .team-badge {
+        width: 110px;
+        height: 110px;
+        border: 4px solid var(--yellow-bright);
+    }
+
+    .badge-score {
+        font-size: 28px;
+    }
+}
+
+@media (max-width: 768px) {
+    .game-board {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .team-panel {
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        padding: 12px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 8px;
+        border: 2px solid var(--yellow-bright) !important;
+        gap: 10px;
+        order: 1;
+    }
+
+    .team-panel.team-left {
+        order: 1;
+    }
+
+    .team-panel.team-right {
+        order: 3;
+    }
+
+    .game-content {
+        order: 2;
+    }
+
+    .arcade-border {
+        padding: 10px 25px;
+        margin: 20px 5px;
+    }
+
+    .answers-list.arcade-grid {
+        padding: 20px 15px;
+    }
+
+    .arcade-border::before,
+    .arcade-border::after {
+        height: 32px;
+    }
+
+    .arcade-border .side-decoration-left,
+    .arcade-border .side-decoration-right {
+        display: none;
+    }
+
+    .answer-number {
+        font-size: 32px;
+        min-width: 50px;
+        margin-right: 4px;
+    }
+
+    .answer-text {
+        font-size: 16px;
+    }
+
+    .answer-points {
+        font-size: 16px;
+        min-width: 40px;
+    }
+
+    .team-badge {
+        width: 95px;
+        height: 95px;
+        border: 4px solid var(--yellow-bright);
+    }
+
+    .badge-score {
+        font-size: 24px;
+    }
+
+    .team-info h3 {
+        font-size: 14px;
+    }
+
+    .total-score {
+        font-size: 12px;
+    }
+
+    .score-display.arcade-top {
+        width: 180px;
+        padding: 8px 10px;
+        top: -38px;
+    }
+
+    .score-display span {
+        font-size: 36px;
+    }
+}
+
+@media (max-width: 480px) {
+    .game-header {
+        padding: 10px 12px;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .header-info h1 {
+        font-size: 14px;
+    }
+
+    .game-board {
+        padding: 10px 5px;
+        gap: 10px;
+    }
+
+    .arcade-border {
+        padding: 8px 15px;
+        border: 8px solid #e60000;
+        margin: 15px 2px;
+        gap: 10px;
+    }
+
+    .arcade-border::before,
+    .arcade-border::after {
+        display: none;
+    }
+
+    .score-display.arcade-top {
+        width: 150px;
+        font-size: 28px;
+        padding: 6px 8px;
+        top: -32px;
+    }
+
+    .score-display span {
+        font-size: 28px;
+        letter-spacing: 1px;
+    }
+
+    .answers-list.arcade-grid {
+        padding: 15px 10px;
+        gap: 0;
+    }
+
+    .answer-number {
+        font-size: 28px;
+        min-width: 45px;
+        margin-right: 3px;
+    }
+
+    .answer-text {
+        font-size: 14px;
+    }
+
+    .answer-content::after {
+        height: 2px;
+        margin: 0 5px;
+    }
+
+    .answer-points {
+        font-size: 14px;
+        min-width: 35px;
+    }
+
+    .team-badge {
+        width: 80px;
+        height: 80px;
+        border: 3px solid var(--yellow-bright);
+    }
+
+    .badge-score {
+        font-size: 20px;
+    }
+
+    .team-panel {
+        flex-direction: column !important;
+        padding: 8px !important;
+    }
+
+    .team-info h3 {
+        font-size: 12px;
+    }
+
+    .total-score {
+        font-size: 10px;
+        margin-top: 2px;
+    }
+
+    .question-area {
+        padding: 12px;
+    }
+
+    .question-area h2 {
+        font-size: 18px;
+    }
+
+    .modal-content {
+        padding: 15px;
+        margin: 10px;
+    }
+
+    .modal-content h2 {
+        font-size: 20px;
+    }
+
+    .btn-action {
+        padding: 10px 15px;
+        font-size: 12px;
+    }
+
+    .player-console {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .answer-input-hidden {
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+
+    .btn-submit-answer {
+        padding: 10px 15px;
+        font-size: 12px;
+    }
+}

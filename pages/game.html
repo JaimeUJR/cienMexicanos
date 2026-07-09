@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/resetAndConstants.css">
+    <link rel="stylesheet" href="../css/game-new.css">
+    <title>Juego - 100 Mexicanos Dijeron</title>
+</head>
+<body>
+    <main class="game-page">
+        <!-- Header con información del juego -->
+        <header class="game-header">
+            <div class="header-info">
+                <h1 id="game-title">100 Mexicanos Dijeron</h1>
+                <p id="round-info">Ronda 1 de 3</p>
+            </div>
+            <button class="btn-close" onclick="window.location.href='../index.html'">
+                <span>✕</span>
+            </button>
+        </header>
+
+        <!-- Contenedor principal del juego -->
+        <div class="game-board">
+            <!-- Panel izquierdo - Equipo 1 -->
+            <div class="team-panel team-left">
+                <div style="flex: 1; min-height: 220px;"></div>
+                <div class="team-badge">
+                    <span class="badge-score" id="team1-score">000</span>
+                </div>
+                <div class="team-info">
+                    <h3 id="team1-name">Equipo Azul</h3>
+                    <p class="total-score" id="team1-total">Total: 0</p>
+                </div>
+            </div>
+
+            <!-- Área central del juego -->
+            <div class="game-content">
+                <!-- Decoración exterior con bolas (borde arcade) -->
+                <div class="arcade-border">
+                    <!-- Decoración lateral izquierda -->
+                    <div class="side-decoration-left"></div>
+                    <!-- Decoración lateral derecha -->
+                    <div class="side-decoration-right"></div>
+
+                    <!-- Contador superior en el tope -->
+                    <div class="score-display arcade-top">
+                        <span id="current-round-score">000</span>
+                    </div>
+
+                    <!-- Pregunta -->
+                    <div class="question-area">
+                        <h2 id="question-text">¿Pregunta 1?</h2>
+                    </div>
+
+                    <!-- Listado de respuestas - OCULTAS -->
+                    <div class="answers-area arcade-board">
+                        <div id="answers-container" class="answers-list arcade-grid">
+                            <!-- Las 5 respuestas se renderizan aquí OCULTAS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input oculto para respuestas (consola del jugador) -->
+                <div class="player-console">
+                    <input 
+                        type="text" 
+                        id="answer-input" 
+                        class="answer-input-hidden" 
+                        placeholder="Ingresa la respuesta (invisible)"
+                        autocomplete="off"
+                    >
+                    <button id="submit-answer-btn" class="btn-submit-answer">Enviar</button>
+                </div>
+
+                <!-- Botones de control -->
+                <div class="game-controls">
+                    <button class="btn-action" id="btn-next-round" disabled>Siguiente Ronda</button>
+                    <button class="btn-action secondary" id="btn-skip" disabled>Pasar Turno</button>
+                </div>
+            </div>
+
+            <!-- Panel derecho - Equipo 2 -->
+            <div class="team-panel team-right">
+                <div style="flex: 1; min-height: 220px;"></div>
+                <div class="team-badge">
+                    <span class="badge-score" id="team2-score">000</span>
+                </div>
+                <div class="team-info">
+                    <h3 id="team2-name">Equipo Rojo</h3>
+                    <p class="total-score" id="team2-total">Total: 0</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de fin de ronda -->
+        <div id="round-end-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2 id="modal-title">Fin de Ronda</h2>
+                <p id="modal-message">El equipo ganó!</p>
+                <button class="btn-primary" id="btn-continue-modal">Continuar</button>
+            </div>
+        </div>
+
+        <!-- Modal de fin de juego -->
+        <div id="game-end-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2>¡Juego Finalizado!</h2>
+                <div id="final-scores" class="final-scores">
+                    <!-- Puntuaciones finales -->
+                </div>
+                <button class="btn-primary" id="btn-back-home">Volver al Home</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/storage.js"></script>
+    <script src="../js/game.js"></script>
+    <script src="../js/gamePlay.js"></script>
+</body>
+</html>
