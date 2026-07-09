@@ -4,11 +4,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Partida</title>
+    <link rel="stylesheet" href="../css/forms.css">
+    <title>Create Game</title>
 </head>
 
 <body>
+    <main class="page-shell">
+        <section class="page-header">
+            <h1>Crear Partida</h1>
+            <p>Completa el formulario para crear una nueva partida y guardarla en el almacenamiento local.</p>
+        </section>
 
+        <section class="form-panel">
+            <form id="new-game-form" class="game-form">
+                <div class="form-row">
+                    <label for="game-name">Nombre de partida:</label>
+                    <input id="game-name" name="gameName" type="text" placeholder="Family Challenge" required>
+                </div>
+
+                <div class="form-row">
+                    <label for="team-a-name">Nombre del equipo A:</label>
+                    <input id="team-a-name" name="teamAName" type="text" placeholder="Team A" required>
+                </div>
+
+                <div class="form-row">
+                    <label for="team-b-name">Nombre del equipo B:</label>
+                    <input id="team-b-name" name="teamBName" type="text" placeholder="Team B" required>
+                </div>
+
+                <div class="form-row">
+                    <label for="rounds-count">Número de rondas:</label>
+                    <input id="rounds-count" name="roundsCount" type="number" min="1" max="10" value="5" required>
+                </div>
+
+                <!-- <div class="form-row form-options">
+                    <label>
+                        <input id="double-rounds" name="enableDoubleRound" type="checkbox">
+                        Activar rondas dobles
+                    </label>
+                </div> -->
+
+                <div class="form-row form-options">
+                    <label>
+                        <input id="enable-sounds" name="enableSounds" type="checkbox" checked>
+                        Activar efectos de sonido
+                    </label>
+                </div>
+
+                <div class="form-row answer-actions">
+                    <button type="button" id="open-answer-modal" class="btn btn-secondary">Configurar respuestas</button>
+                    <button type="submit" class="btn btn-primary">Create Game</button>
+                </div>
+
+                <div id="form-feedback" class="form-feedback"></div>
+            </form>
+        </section>
+    </main>
+
+    <div id="answer-modal" class="modal" aria-hidden="true">
+        <div class="modal-card">
+            <div class="round-nav">
+                <button type="button" id="prev-round" class="btn btn-secondary">&larr;</button>
+                <h2 id="round-title">Ronda 1</h2>
+                <button type="button" id="next-round" class="btn btn-secondary">&rarr;</button>
+            </div>
+
+            <div class="round-grid">
+                <div class="form-row">
+                    <label for="answer-1">Respuesta 1</label>
+                    <input id="answer-1" type="text" placeholder="Respuesta 1">
+                </div>
+                <div class="form-row">
+                    <label for="points-1">Puntos 1</label>
+                    <input id="points-1" type="number" min="0" value="0">
+                </div>
+                <div class="form-row">
+                    <label for="answer-2">Respuesta 2</label>
+                    <input id="answer-2" type="text" placeholder="Respuesta 2">
+                </div>
+                <div class="form-row">
+                    <label for="points-2">Puntos 2</label>
+                    <input id="points-2" type="number" min="0" value="0">
+                </div>
+                <div class="form-row">
+                    <label for="answer-3">Respuesta 3</label>
+                    <input id="answer-3" type="text" placeholder="Respuesta 3">
+                </div>
+                <div class="form-row">
+                    <label for="points-3">Puntos 3</label>
+                    <input id="points-3" type="number" min="0" value="0">
+                </div>
+                <div class="form-row">
+                    <label for="answer-4">Respuesta 4</label>
+                    <input id="answer-4" type="text" placeholder="Respuesta 4">
+                </div>
+                <div class="form-row">
+                    <label for="points-4">Puntos 4</label>
+                    <input id="points-4" type="number" min="0" value="0">
+                </div>
+                <div class="form-row">
+                    <label for="answer-5">Respuesta 5</label>
+                    <input id="answer-5" type="text" placeholder="Respuesta 5">
+                </div>
+                <div class="form-row">
+                    <label for="points-5">Puntos 5</label>
+                    <input id="points-5" type="number" min="0" value="0">
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" id="close-answer-modal" class="btn btn-secondary">Cancelar</button>
+                <button type="button" id="save-answer" class="btn btn-primary">Guardar ronda</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/storage.js"></script>
+    <script src="../js/game.js"></script>
+    <script src="../js/newGame.js" defer></script>
 </body>
 
 </html>
