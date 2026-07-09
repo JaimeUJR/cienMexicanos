@@ -1,5 +1,6 @@
 const form = document.getElementById('new-game-form');
-const feedback = document.getElementById('form-feedback');
+const descriptionText = document.getElementById('page-description-text');
+const defaultDescription = descriptionText?.textContent || '';
 const openModalButton = document.getElementById('open-answer-modal');
 const closeModalButton = document.getElementById('close-answer-modal');
 const saveAnswerButton = document.getElementById('save-answer');
@@ -25,9 +26,22 @@ function getFieldValue(id) {
 }
 
 function setFeedback(message, type = 'success') {
-  if (!feedback) return;
-  feedback.textContent = message;
-  feedback.className = `form-feedback ${type}`;
+  if (!descriptionText) return;
+  descriptionText.textContent = message;
+  descriptionText.className = type;
+  
+  // Auto-restore default description after 3 seconds for success messages
+  if (type === 'success') {
+    setTimeout(() => {
+      restoreDefaultDescription();
+    }, 3000);
+  }
+}
+
+function restoreDefaultDescription() {
+  if (!descriptionText) return;
+  descriptionText.textContent = defaultDescription;
+  descriptionText.className = '';
 }
 
 function getRoundCount() {
@@ -119,19 +133,19 @@ function generateConfirmationSummary(payload) {
 
 function validatePayload(payload) {
   if (!payload.gameName) {
-    return 'Please enter a game name.';
+    return 'Por favor ingresa el nombre de la partida.';
   }
   if (!payload.teamAName) {
-    return 'Please enter the Team A name.';
+    return 'Por favor ingresa el nombre del equipo A.';
   }
   if (!payload.teamBName) {
-    return 'Please enter the Team B name.';
+    return 'Por favor ingresa el nombre del equipo B.';
   }
   if (payload.teamAName.toLowerCase() === payload.teamBName.toLowerCase()) {
-    return 'Team names must be different.';
+    return 'Los nombres de los equipos deben ser diferentes.';
   }
   if (!Number.isInteger(payload.roundsCount) || payload.roundsCount < 1 || payload.roundsCount > 10) {
-    return 'Rounds count must be a whole number between 1 and 10.';
+    return 'El número de rondas debe ser un número entero entre 1 y 10.';
   }
   return '';
 }
@@ -200,7 +214,7 @@ confirmCreateButton?.addEventListener('click', () => {
   
   const game = window.createGameState(pendingPayload);
   closeConfirmModal();
-  setFeedback(`Game created successfully: ${game.name}. Active game is saved.`, 'success');
+  setFeedback(`Partida creada exitosamente: ${game.name}. Se ha guardado como partida activa.`, 'success');
   form.reset();
   roundsData.length = 0;
   currentRound = 1;
