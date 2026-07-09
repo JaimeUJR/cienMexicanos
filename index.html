@@ -52,49 +52,49 @@
     <script src="./js/storage.js"></script>
     <script src="./js/game.js"></script>
     <script>
-        // Limpiar localStorage y crear partida de prueba
-        window.localStorage.removeItem('mexicanos-dijeron-v1');
+        // Inicializar storage (cargar partidas guardadas)
         window.initializeStorage();
         
-        // Crear partida de prueba con respuestas y puntos configurados
-        const testGamePayload = {
-            gameName: 'Partida de Prueba',
-            teamAName: 'Equipo Azul',
-            teamBName: 'Equipo Rojo',
-            roundsCount: 3,
-            enableDoubleRound: false,
-            enableSounds: false,
-            roundsData: [
-                // Ronda 1 - Fútbol
-                [
-                    { text: 'Fútbol', points: 30 },
-                    { text: 'Tennis', points: 25 },
-                    { text: 'Béisbol', points: 20 },
-                    { text: 'Lucha Libre', points: 15 },
-                    { text: 'Básquetbol', points: 10 }
-                ],
-                // Ronda 2 - Películas
-                [
-                    { text: 'Avatar', points: 35 },
-                    { text: 'Titanic', points: 28 },
-                    { text: 'Inception', points: 22 },
-                    { text: 'Interstellar', points: 12 },
-                    { text: 'Matrix', points: 8 }
-                ],
-                // Ronda 3 - Cantantes
-                [
-                    { text: 'Juan Gabriel', points: 40 },
-                    { text: 'Selena', points: 32 },
-                    { text: 'Luis Miguel', points: 20 },
-                    { text: 'Thalia', points: 15 },
-                    { text: 'Reik', points: 5 }
+        // Solo crear partida de prueba si no existen partidas
+        const existingGames = window.getGames();
+        if (existingGames.length === 0) {
+            const testGamePayload = {
+                gameName: 'Partida de Prueba',
+                teamAName: 'Equipo Azul',
+                teamBName: 'Equipo Rojo',
+                roundsCount: 3,
+                enableDoubleRound: false,
+                enableSounds: false,
+                roundsData: [
+                    // Ronda 1 - Fútbol
+                    [
+                        { text: 'Fútbol', points: 30 },
+                        { text: 'Tennis', points: 25 },
+                        { text: 'Béisbol', points: 20 },
+                        { text: 'Lucha Libre', points: 15 },
+                        { text: 'Básquetbol', points: 10 }
+                    ],
+                    // Ronda 2 - Películas
+                    [
+                        { text: 'Avatar', points: 35 },
+                        { text: 'Titanic', points: 28 },
+                        { text: 'Inception', points: 22 },
+                        { text: 'Interstellar', points: 12 },
+                        { text: 'Matrix', points: 8 }
+                    ],
+                    // Ronda 3 - Cantantes
+                    [
+                        { text: 'Juan Gabriel', points: 40 },
+                        { text: 'Selena', points: 32 },
+                        { text: 'Luis Miguel', points: 20 },
+                        { text: 'Thalia', points: 15 },
+                        { text: 'Reik', points: 5 }
+                    ]
                 ]
-            ]
-        };
-        
-        window.createGameState(testGamePayload);
-        const activeGame = window.getActiveGame();
-        window.setActiveGame(activeGame.id);
+            };
+            
+            window.createGameState(testGamePayload);
+        }
         
         function loadGamesInHome() {
             const games = window.getGames();
@@ -147,7 +147,15 @@
         }
 
         // Cargar partidas al abrir el home
-        loadGamesInHome();
+        document.addEventListener('DOMContentLoaded', loadGamesInHome);
+        
+        // Recargar partidas cuando se vuelve a la página
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                window.initializeStorage();
+                loadGamesInHome();
+            }
+        });
     </script>
 </body>
 

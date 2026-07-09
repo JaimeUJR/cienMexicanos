@@ -1,14 +1,89 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administrar Partida</title>
+    <link rel="stylesheet" href="../css/resetAndConstants.css">
+    <link rel="stylesheet" href="../css/game-new.css">
+    <link rel="stylesheet" href="../css/manage-game.css">
+    <title>Administrar Partidas</title>
 </head>
 
 <body>
+    <div class="manage-page">
+        <!-- Header -->
+        <div class="manage-header">
+            <div class="header-content">
+                <h1>Administrar Partidas</h1>
+                <a href="../index.html" class="btn-back">← Inicio</a>
+            </div>
+        </div>
 
+        <!-- Main Content -->
+        <main class="manage-main">
+            <!-- Filter/Sort Section -->
+            <div class="filter-section">
+                <select id="filter-status" class="filter-select">
+                    <option value="">Todas las partidas</option>
+                    <option value="setup">En configuración</option>
+                    <option value="active">En juego</option>
+                    <option value="completed">Completadas</option>
+                </select>
+                <input 
+                    type="text" 
+                    id="search-games" 
+                    class="search-input" 
+                    placeholder="Buscar partida por nombre..."
+                >
+            </div>
+
+            <!-- Games List -->
+            <div id="games-list" class="games-list">
+                <div class="empty-state">
+                    <p>No hay partidas guardadas</p>
+                    <a href="./newGame.html" class="btn-primary">Crear Primera Partida</a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Detail Modal -->
+    <div id="detail-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Detalles de la Partida</h2>
+                <button class="modal-close" onclick="closeDetailModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div id="modal-body-content"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeDetailModal()">Cerrar</button>
+                <button class="btn-primary" id="btn-play-from-modal" onclick="playFromModal()">Jugar Partida</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Delete Modal -->
+    <div id="confirm-modal" class="modal hidden">
+        <div class="modal-content confirm-modal-content">
+            <div class="modal-header">
+                <h2>Confirmar acción</h2>
+            </div>
+            <div class="modal-body">
+                <p id="confirm-message">¿Estás seguro?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeConfirmModal()">Cancelar</button>
+                <button class="btn-danger" id="btn-confirm-action">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/storage.js"></script>
+    <script src="../js/manage-game.js"></script>
 </body>
 
 </html>
