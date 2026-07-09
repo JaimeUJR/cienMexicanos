@@ -12,6 +12,7 @@ const confirmModal = document.getElementById('confirm-modal');
 const confirmSummary = document.getElementById('confirm-summary');
 const cancelCreateButton = document.getElementById('cancel-create');
 const confirmCreateButton = document.getElementById('confirm-create');
+const resetFormButton = document.getElementById('reset-form-btn');
 
 const roundsData = [];
 let currentRound = 1;
@@ -205,6 +206,14 @@ confirmCreateButton?.addEventListener('click', () => {
   currentRound = 1;
   loadCurrentRound();
   pendingPayload = null;
+});
+
+resetFormButton?.addEventListener('click', () => {
+  form.reset();
+  roundsData.length = 0;
+  currentRound = 1;
+  loadCurrentRound();
+  setFeedback('Formulario limpiado correctamente.', 'success');
 });
 
 loadCurrentRound();

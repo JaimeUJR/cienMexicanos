@@ -27,6 +27,63 @@ body {
     border-radius: 28px;
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
     text-align: center;
+    position: relative;
+}
+
+.home-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 215, 0, 0.15);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.home-btn:hover {
+    background: rgba(255, 215, 0, 0.25);
+    border-color: rgba(255, 215, 0, 0.5);
+    transform: scale(1.1);
+}
+
+.home-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+.reset-btn {
+    position: absolute;
+    top: 76px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: rgba(227, 227, 227, 0.15);
+    border: 1px solid rgba(227, 227, 227, 0.3);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.reset-btn:hover {
+    background: rgba(227, 227, 227, 0.25);
+    border-color: rgba(227, 227, 227, 0.5);
+    transform: scale(1.1) rotate(15deg);
+}
+
+.reset-btn svg {
+    width: 24px;
+    height: 24px;
 }
 
 .page-header h1 {
@@ -118,6 +175,7 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
     min-width: 180px;
     padding: 14px 22px;
     border: none;
@@ -126,6 +184,14 @@ body {
     font-weight: 700;
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn svg {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn:hover {

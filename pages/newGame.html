@@ -11,6 +11,12 @@
 <body>
     <main class="page-shell">
         <section class="page-header">
+            <a href="../index.html" id="home-link" class="home-btn" title="Regresar al inicio">
+                <img src="../sources/icons/home.svg" alt="Home">
+            </a>
+            <button id="reset-form-btn" class="reset-btn" title="Limpiar formulario" type="button">
+                <img src="../sources/icons/refresh.svg" alt="Reset">
+            </button>
             <h1>Crear Partida</h1>
             <p>Completa el formulario para crear una nueva partida y guardarla en el almacenamiento local.</p>
         </section>
@@ -64,9 +70,9 @@
     <div id="answer-modal" class="modal" aria-hidden="true">
         <div class="modal-card">
             <div class="round-nav">
-                <button type="button" id="prev-round" class="btn btn-secondary">&larr;</button>
+                <button type="button" id="prev-round" class="btn btn-secondary"><img src="../sources/icons/arrow_back.svg" alt="Previous"></button>
                 <h2 id="round-title">Ronda 1</h2>
-                <button type="button" id="next-round" class="btn btn-secondary">&rarr;</button>
+                <button type="button" id="next-round" class="btn btn-secondary"><img src="../sources/icons/arrow_forward.svg" alt="Next"></button>
             </div>
 
             <div class="round-grid">
@@ -126,8 +132,14 @@
                 <!-- Summary content will be inserted here -->
             </div>
             <div class="modal-actions">
-                <button type="button" id="cancel-create" class="btn btn-secondary">Cancelar</button>
-                <button type="button" id="confirm-create" class="btn btn-primary">Crear Partida</button>
+                <button type="button" id="cancel-create" class="btn btn-secondary">
+                    <img src="../sources/icons/close.svg" alt="Cancel">
+                    Cancelar
+                </button>
+                <button type="button" id="confirm-create" class="btn btn-primary">
+                    <img src="../sources/icons/check.svg" alt="Confirm">
+                    Crear Partida
+                </button>
             </div>
         </div>
     </div>
