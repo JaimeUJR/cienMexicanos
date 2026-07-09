@@ -8,6 +8,10 @@ const prevRoundButton = document.getElementById('prev-round');
 const nextRoundButton = document.getElementById('next-round');
 const roundTitle = document.getElementById('round-title');
 const roundsCountInput = document.getElementById('rounds-count');
+const confirmModal = document.getElementById('confirm-modal');
+const confirmSummary = document.getElementById('confirm-summary');
+const cancelCreateButton = document.getElementById('cancel-create');
+const confirmCreateButton = document.getElementById('confirm-create');
 
 const roundsData = [];
 let currentRound = 1;
@@ -72,6 +76,46 @@ function closeModal() {
   answerModal?.setAttribute('aria-hidden', 'true');
 }
 
+function openConfirmModal(payload) {
+  confirmSummary.innerHTML = generateConfirmationSummary(payload);
+  confirmModal?.classList.add('open');
+  confirmModal?.setAttribute('aria-hidden', 'false');
+}
+
+function closeConfirmModal() {
+  confirmModal?.classList.remove('open');
+  confirmModal?.setAttribute('aria-hidden', 'true');
+}
+
+function generateConfirmationSummary(payload) {
+  const answersCount = payload.roundsData.reduce((total, round) => {
+    return total + round.filter(answer => answer.text.trim()).length;
+  }, 0);
+
+  return `
+    <div class="summary-item">
+      <strong>Nombre de la partida:</strong>
+      <p>${payload.gameName}</p>
+    </div>
+    <div class="summary-item">
+      <strong>Equipos:</strong>
+      <p>${payload.teamAName} vs ${payload.teamBName}</p>
+    </div>
+    <div class="summary-item">
+      <strong>Número de rondas:</strong>
+      <p>${payload.roundsCount} rondas</p>
+    </div>
+    <div class="summary-item">
+      <strong>Respuestas configuradas:</strong>
+      <p>${answersCount} respuestas de un total de ${payload.roundsCount * 5}</p>
+    </div>
+    <div class="summary-item">
+      <strong>Sonido:</strong>
+      <p>${payload.enableSounds ? '✓ Activado' : '✗ Desactivado'}</p>
+    </div>
+  `;
+}
+
 function validatePayload(payload) {
   if (!payload.gameName) {
     return 'Please enter a game name.';
@@ -119,6 +163,8 @@ roundsCountInput?.addEventListener('input', () => {
   loadCurrentRound();
 });
 
+let pendingPayload = null;
+
 form?.addEventListener('submit', event => {
   event.preventDefault();
 
@@ -139,13 +185,26 @@ form?.addEventListener('submit', event => {
   }
 
   saveCurrentRound();
+  pendingPayload = payload;
+  openConfirmModal(payload);
+});
 
-  const game = window.createGameState(payload);
+cancelCreateButton?.addEventListener('click', () => {
+  closeConfirmModal();
+  pendingPayload = null;
+});
+
+confirmCreateButton?.addEventListener('click', () => {
+  if (!pendingPayload) return;
+  
+  const game = window.createGameState(pendingPayload);
+  closeConfirmModal();
   setFeedback(`Game created successfully: ${game.name}. Active game is saved.`, 'success');
   form.reset();
   roundsData.length = 0;
   currentRound = 1;
   loadCurrentRound();
+  pendingPayload = null;
 });
 
 loadCurrentRound();
