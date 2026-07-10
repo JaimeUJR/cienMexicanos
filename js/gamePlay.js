@@ -1,6 +1,9 @@
 // ==================== ESTADO DEL JUEGO ====================
 let gameState = {
     game: null,
+    gameTemplate: null,
+    pendingHistoryEntry: null,
+    resultSaved: false,
     currentRoundIndex: 0,
     currentTeamIndex: 0,
     roundScore: 0,
@@ -21,6 +24,8 @@ window.initializeGamePlay = function() {
         window.location.href = '../index.html';
         return;
     }
+
+    gameState.gameTemplate = createReplayTemplate(gameState.game);
 
     // Inicializar interfaz
     updateGameUI();
@@ -90,6 +95,125 @@ function normalizeAnswerText(value) {
         .toLowerCase()
         .replace(/\s+/g, ' ')
         .trim();
+}
+
+function cloneData(value) {
+    return JSON.parse(JSON.stringify(value));
+}
+
+function createReplayTemplate(game) {
+    return {
+        id: game.id,
+        name: game.name,
+        createdAt: game.createdAt,
+        config: cloneData(game.config || {}),
+        teams: (game.teams || []).map((team, index) => ({
+            id: team.id || `team-${index + 1}`,
+            name: team.name || `Equipo ${index + 1}`
+        })),
+        rounds: (game.rounds || []).map((round, roundIndex) => ({
+            id: round.id || `round-${roundIndex + 1}`,
+            question: round.question || `Pregunta ${roundIndex + 1}`,
+            roundType: round.roundType || 'normal',
+            answers: (round.answers || []).map((answer, answerIndex) => ({
+                id: answer.id || `answer-${roundIndex + 1}-${answerIndex + 1}`,
+                text: answer.text || '',
+                points: Number(answer.points) || 0
+            }))
+        }))
+    };
+}
+
+function createFreshGameFromTemplate() {
+    const template = gameState.gameTemplate || createReplayTemplate(gameState.game);
+    return {
+        id: template.id,
+        name: template.name,
+        createdAt: template.createdAt,
+        updatedAt: new Date().toISOString(),
+        status: 'setup',
+        config: cloneData(template.config || {}),
+        teams: (template.teams || []).map((team, index) => ({
+            id: team.id || `team-${index + 1}`,
+            name: team.name || `Equipo ${index + 1}`,
+            totalScore: 0,
+            roundScore: 0,
+            strikes: 0,
+            isActive: index === 0
+        })),
+        rounds: (template.rounds || []).map((round, roundIndex) => ({
+            id: round.id || `round-${roundIndex + 1}`,
+            question: round.question || `Pregunta ${roundIndex + 1}`,
+            roundType: round.roundType || 'normal',
+            answers: (round.answers || []).map((answer, answerIndex) => ({
+                id: answer.id || `answer-${roundIndex + 1}-${answerIndex + 1}`,
+                text: answer.text || '',
+                points: Number(answer.points) || 0,
+                revealed: false,
+                isCorrect: false
+            })),
+            currentRoundPot: 0,
+            status: 'pending',
+            revealedCount: 0,
+            strikeCount: 0,
+            stealAttempted: false,
+            winnerTeamId: null
+        })),
+        currentRoundIndex: 0,
+        historyEntry: null
+    };
+}
+
+function buildHistoryEntry() {
+    const game = gameState.game;
+    const team1Score = game.teams[0].totalScore;
+    const team2Score = game.teams[1].totalScore;
+    const winner = team1Score > team2Score ? 0 : (team2Score > team1Score ? 1 : -1);
+
+    return {
+        gameId: game.id,
+        gameName: game.name,
+        date: new Date().toISOString(),
+        finalScores: game.teams.map(team => ({ name: team.name, score: team.totalScore })),
+        winner: winner >= 0 ? game.teams[winner].name : 'Empate'
+    };
+}
+
+function saveHistoryResultIfNeeded() {
+    if (!gameState.pendingHistoryEntry || gameState.resultSaved) {
+        return;
+    }
+
+    window.saveHistoryEntry(gameState.pendingHistoryEntry);
+    gameState.resultSaved = true;
+}
+
+function resetMatchState() {
+    gameState.currentRoundIndex = 0;
+    gameState.currentTeamIndex = 0;
+    gameState.roundScore = 0;
+    gameState.roundStrikes = 0;
+    gameState.revealedAnswerCount = 0;
+    gameState.answeredCorrectly = false;
+    gameState.isRoundActive = true;
+    gameState.pendingHistoryEntry = null;
+    gameState.resultSaved = false;
+}
+
+function replayCurrentGame() {
+    saveHistoryResultIfNeeded();
+
+    gameState.game = createFreshGameFromTemplate();
+    resetMatchState();
+
+    window.saveCurrentGame(gameState.game);
+    window.setActiveGame(gameState.game.id);
+
+    document.getElementById('game-end-modal').classList.add('hidden');
+    updateGameUI();
+    renderCurrentRound();
+    updateStrikeDisplay();
+    focusAnswerInput();
 }
 
 function updateStrikeDisplay() {
@@ -235,15 +359,13 @@ function endGame() {
     // Mostrar modal
     modal.classList.remove('hidden');
 
-    // Guardar en historial
-    const historyEntry = {
-        gameId: game.id,
-        gameName: game.name,
-        date: new Date().toISOString(),
-        finalScores: game.teams.map(t => ({ name: t.name, score: t.totalScore })),
-        winner: winner >= 0 ? game.teams[winner].name : 'Empate'
-    };
-    window.saveHistoryEntry(historyEntry);
+    game.status = 'completed';
+    game.updatedAt = new Date().toISOString();
+    window.saveCurrentGame(game);
+
+    gameState.pendingHistoryEntry = buildHistoryEntry();
+    gameState.resultSaved = false;
+    saveHistoryResultIfNeeded();
 }
 
 // ==================== MOSTRAR MENSAJE ====================
@@ -311,7 +433,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Botón volver al home
     document.getElementById('btn-back-home').addEventListener('click', function() {
+        saveHistoryResultIfNeeded();
         window.location.href = '../index.html';
+    });
+
+    // Botón volver a jugar
+    document.getElementById('btn-replay').addEventListener('click', function() {
+        replayCurrentGame();
     });
 });
 

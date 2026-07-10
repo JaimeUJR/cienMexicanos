@@ -180,6 +180,45 @@ window.saveCurrentGame = function(game) {
   window.saveGame(game);
 }
 
+window.resetGameProgress = function(id) {
+  const game = appData.games.find(item => item.id === id);
+  if (!game) {
+    return null;
+  }
+
+  const resetGame = {
+    ...game,
+    updatedAt: new Date().toISOString(),
+    status: 'setup',
+    currentRoundIndex: 0,
+    historyEntry: null,
+    teams: (game.teams || []).map((team, index) => ({
+      ...team,
+      totalScore: 0,
+      roundScore: 0,
+      strikes: 0,
+      isActive: index === 0
+    })),
+    rounds: (game.rounds || []).map(round => ({
+      ...round,
+      status: 'pending',
+      currentRoundPot: 0,
+      revealedCount: 0,
+      strikeCount: 0,
+      stealAttempted: false,
+      winnerTeamId: null,
+      answers: (round.answers || []).map(answer => ({
+        ...answer,
+        revealed: false,
+        isCorrect: false
+      }))
+    }))
+  };
+
+  window.saveGame(resetGame);
+  return resetGame;
+}
+
 window.generateId = function() {
   return '_' + Math.random().toString(36).slice(2, 10);
 }

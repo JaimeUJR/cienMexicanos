@@ -131,6 +131,9 @@
             document.querySelectorAll('.btn-play').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const gameId = this.dataset.gameId;
+                    if (window.resetGameProgress) {
+                        window.resetGameProgress(gameId);
+                    }
                     window.setActiveGame(gameId);
                     window.location.href = './pages/game.html';
                 });

@@ -674,6 +674,32 @@ html {
     transform: translateY(-3px);
 }
 
+.final-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.btn-modal-secondary {
+    padding: 15px 35px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    color: var(--white-pure);
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    text-transform: uppercase;
+}
+
+.btn-modal-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
+    transform: translateY(-3px);
+}
+
 /* ==================== RESPONSIVE ==================== */
 @media (max-width: 1200px) {
     .arcade-border {
