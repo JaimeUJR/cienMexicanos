@@ -25,6 +25,7 @@ window.initializeGamePlay = function() {
     // Inicializar interfaz
     updateGameUI();
     renderCurrentRound();
+    updateStrikeDisplay();
     focusAnswerInput();
 };
 
@@ -82,18 +83,42 @@ function renderCurrentRound() {
     }).join('');
 }
 
+function normalizeAnswerText(value) {
+    return String(value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+function updateStrikeDisplay() {
+    const marks = document.querySelectorAll('#strike-count .strike-mark');
+    marks.forEach((mark, index) => {
+        const shouldBeActive = index < gameState.roundStrikes;
+        mark.classList.toggle('active', shouldBeActive);
+    });
+}
+
+function showStrikeBurst() {
+    const burst = document.getElementById('strike-burst');
+    if (!burst) return;
+
+    burst.classList.remove('show');
+    void burst.offsetWidth;
+    burst.classList.add('show');
+}
+
 // ==================== MANEJAR RESPUESTA INGRESADA ====================
 function handleAnswerSubmission(inputText) {
     const { game, currentRoundIndex, currentTeamIndex } = gameState;
     const round = game.rounds[currentRoundIndex];
-    const inputLower = inputText.toLowerCase().trim();
+    const normalizedInput = normalizeAnswerText(inputText);
 
-    // Buscar respuesta correcta (coincidencia exacta o parcial)
+    // Buscar respuesta correcta con coincidencia exacta normalizada.
     const matchedAnswer = round.answers.find(answer => {
-        const answerLower = answer.text.toLowerCase().trim();
-        return answerLower === inputLower || 
-               answerLower.includes(inputLower) || 
-               inputLower.includes(answerLower);
+        const normalizedAnswer = normalizeAnswerText(answer.text);
+        return normalizedAnswer.length > 0 && normalizedAnswer === normalizedInput;
     });
 
     const answerInput = document.getElementById('answer-input');
@@ -102,6 +127,8 @@ function handleAnswerSubmission(inputText) {
         // Respuesta incorrecta
         gameState.roundStrikes++;
         gameState.answeredCorrectly = false;
+        updateStrikeDisplay();
+        showStrikeBurst();
 
         // Mostrar feedback visual
         answerInput.classList.add('error');
@@ -154,6 +181,7 @@ function switchTeam() {
     gameState.currentTeamIndex = 1 - gameState.currentTeamIndex;
     gameState.roundStrikes = 0;
     gameState.roundScore = 0;
+    updateStrikeDisplay();
     updateGameUI();
     renderCurrentRound();
     focusAnswerInput();
@@ -172,6 +200,7 @@ function endRound() {
         gameState.revealedAnswerCount = 0;
         gameState.answeredCorrectly = false;
 
+        updateStrikeDisplay();
         updateGameUI();
         renderCurrentRound();
         focusAnswerInput();
@@ -272,11 +301,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Botón siguiente ronda
     document.getElementById('btn-next-round').addEventListener('click', function() {
         endRound();
-    });
-
-    // Botón pasar turno
-    document.getElementById('btn-skip').addEventListener('click', function() {
-        switchTeam();
     });
 
     // Botón continuar en modal

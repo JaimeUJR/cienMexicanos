@@ -49,6 +49,9 @@
 
                     <!-- Listado de respuestas - OCULTAS -->
                     <div class="answers-area arcade-board">
+                        <div class="strike-overlay" id="strike-overlay" aria-live="polite">
+                            <div class="strike-burst" id="strike-burst">X</div>
+                        </div>
                         <div id="answers-container" class="answers-list arcade-grid">
                             <!-- Las 5 respuestas se renderizan aquí OCULTAS -->
                         </div>
@@ -64,13 +67,18 @@
                         placeholder="Ingresa la respuesta (invisible)"
                         autocomplete="off"
                     >
-                    <button id="submit-answer-btn" class="btn-submit-answer">Enviar</button>
+                    <button id="submit-answer-btn" class="btn-submit-answer">Probar</button>
                 </div>
 
                 <!-- Botones de control -->
                 <div class="game-controls">
                     <button class="btn-action" id="btn-next-round" disabled>Siguiente Ronda</button>
-                    <button class="btn-action secondary" id="btn-skip" disabled>Pasar Turno</button>
+                </div>
+
+                <div class="strike-count" id="strike-count" aria-live="polite">
+                    <span class="strike-mark" data-strike-index="1">X</span>
+                    <span class="strike-mark" data-strike-index="2">X</span>
+                    <span class="strike-mark" data-strike-index="3">X</span>
                 </div>
             </div>
 
