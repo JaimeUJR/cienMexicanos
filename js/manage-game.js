@@ -83,12 +83,11 @@ function createGameCard(game) {
     const teamA = game.teams?.[0] || { name: 'Equipo A', totalScore: 0 };
     const teamB = game.teams?.[1] || { name: 'Equipo B', totalScore: 0 };
     const roundCount = game.rounds?.length || 0;
-    const hiddenClass = game.hidden ? 'hidden' : '';
     const activeGameId = window.getActiveGame()?.id;
     const isActive = game.id === activeGameId;
 
     return `
-        <div class="game-card ${hiddenClass}" data-game-id="${game.id}">
+        <div class="game-card" data-game-id="${game.id}">
             <div class="game-card-header">
                 <h3 class="game-card-title">${escapeHtml(game.name)}</h3>
                 <span class="game-status ${statusClass}">${statusLabel}</span>
@@ -123,9 +122,6 @@ function createGameCard(game) {
                 </button>
                 <button class="btn-card-action btn-details" onclick="showGameDetails('${game.id}')">
                     ℹ Detalles
-                </button>
-                <button class="btn-card-action btn-hide" onclick="toggleHideGame('${game.id}')">
-                    ${game.hidden ? '👁 Mostrar' : '👁‍🗨 Ocultar'}
                 </button>
                 <button class="btn-card-action btn-delete" onclick="deleteGame('${game.id}')">
                     🗑 Eliminar
@@ -237,26 +233,6 @@ function showGameDetails(gameId) {
 function closeDetailModal() {
     document.getElementById('detail-modal').classList.add('hidden');
     selectedGameForAction = null;
-}
-
-// =============================================
-// OCULTAR/MOSTRAR PARTIDA
-// =============================================
-function toggleHideGame(gameId) {
-    const game = allGames.find(g => g.id === gameId);
-    if (!game) return;
-
-    const action = game.hidden ? 'mostrar' : 'ocultar';
-    showConfirmModal(
-        `¿Deseas ${action} la partida "${game.name}"?`,
-        () => {
-            game.hidden = !game.hidden;
-            window.saveGame(game);
-            loadAllGames();
-            applyFilters();
-            showFeedbackMessage(`Partida ${action}da correctamente`, 'success');
-        }
-    );
 }
 
 // =============================================
