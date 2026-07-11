@@ -1,3 +1,4 @@
+// ==================== CONFIGURACION BASE ====================
 const STORAGE_KEY = 'mexicanos-dijeron-v1';
 const LEGACY_STORAGE_KEYS = [
   'mexicanos-dijeron',
@@ -14,6 +15,7 @@ const DEFAULT_DATA = {
 };
 let appData = { ...DEFAULT_DATA };
 
+// ==================== NORMALIZACION ====================
 function normalizeGame(game) {
   if (!game || typeof game !== 'object') {
     return null;
@@ -59,6 +61,7 @@ function normalizeData(parsed) {
   };
 }
 
+// ==================== ACCESO SEGURO A STORAGE ====================
 function safeReadStorage(key) {
   try {
     return window.localStorage.getItem(key);
@@ -100,6 +103,7 @@ function findStoredPayload() {
   return { raw: null, sourceKey: null };
 }
 
+// ==================== CICLO DE VIDA ====================
 window.initializeStorage = function() {
   const { raw, sourceKey } = findStoredPayload();
 
@@ -127,6 +131,7 @@ window.persist = function() {
   safeWriteStorage(STORAGE_KEY, JSON.stringify(appData));
 }
 
+// ==================== CONSULTAS ====================
 window.getGames = function() {
   return [...appData.games];
 }
@@ -139,6 +144,7 @@ window.getHistoryEntries = function() {
   return [...appData.history];
 }
 
+// ==================== MUTACIONES ====================
 window.saveGame = function(game) {
   const idx = appData.games.findIndex(item => item.id === game.id);
   if (idx >= 0) {
@@ -176,6 +182,7 @@ window.clearHistory = function() {
   window.persist();
 }
 
+// ==================== HELPERS DE FLUJO ====================
 window.saveCurrentGame = function(game) {
   window.saveGame(game);
 }
@@ -219,6 +226,7 @@ window.resetGameProgress = function(id) {
   return resetGame;
 }
 
+// ==================== UTILIDADES ====================
 window.generateId = function() {
   return '_' + Math.random().toString(36).slice(2, 10);
 }

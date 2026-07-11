@@ -1,5 +1,7 @@
+// ==================== INICIALIZACION ====================
 window.initializeStorage();
 
+// ==================== UTILIDADES ====================
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = String(text || '');
@@ -17,6 +19,7 @@ function formatDate(isoValue) {
     });
 }
 
+// ==================== RENDER ====================
 function renderHistory() {
     const container = document.getElementById('history-container');
     if (!container) {
@@ -60,6 +63,7 @@ function renderHistory() {
     }).join('');
 }
 
+// ==================== ACCIONES ====================
 function confirmClearHistory() {
     if (!window.getHistoryEntries().length) {
         return;
@@ -74,6 +78,7 @@ function confirmClearHistory() {
     renderHistory();
 }
 
+// ==================== EVENTOS ====================
 document.addEventListener('DOMContentLoaded', function() {
     const clearButton = document.getElementById('btn-clear-history');
     if (clearButton) {

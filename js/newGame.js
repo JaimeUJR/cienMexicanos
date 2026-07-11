@@ -1,3 +1,4 @@
+// ==================== REFERENCIAS DOM ====================
 const form = document.getElementById('new-game-form');
 const descriptionText = document.getElementById('page-description-text');
 const defaultDescription = descriptionText?.textContent || '';
@@ -16,11 +17,13 @@ const cancelCreateButton = document.getElementById('cancel-create');
 const confirmCreateButton = document.getElementById('confirm-create');
 const resetFormButton = document.getElementById('reset-form-btn');
 
+// ==================== ESTADO LOCAL ====================
 const roundsData = [];
 let currentRound = 1;
 
 window.initializeStorage();
 
+// ==================== FEEDBACK UI ====================
 function getFieldValue(id) {
   const input = document.getElementById(id);
   return input ? input.value.trim() : '';
@@ -51,6 +54,7 @@ function setRoundModalFeedback(message = '') {
   roundModalFeedback.classList.toggle('show', Boolean(message));
 }
 
+// ==================== RONDAS Y VALIDACIONES ====================
 function getRoundCount() {
   const value = Number(roundsCountInput?.value || 1);
   return Number.isInteger(value) && value > 0 ? value : 1;
@@ -92,6 +96,7 @@ function validateAllRoundsPointsLimit(payload) {
   return '';
 }
 
+// ==================== MODALES ====================
 function loadCurrentRound() {
   const entries = roundsData[currentRound - 1] || [];
   for (let index = 1; index <= 5; index += 1) {
@@ -134,6 +139,7 @@ function closeConfirmModal() {
   confirmModal?.setAttribute('aria-hidden', 'true');
 }
 
+// ==================== RESUMEN Y VALIDACION DE FORM ====================
 function generateConfirmationSummary(payload) {
   const answersCount = payload.roundsData.reduce((total, round) => {
     return total + round.filter(answer => answer.text.trim()).length;
@@ -182,6 +188,7 @@ function validatePayload(payload) {
   return '';
 }
 
+// ==================== EVENTOS ====================
 openModalButton?.addEventListener('click', openModal);
 closeModalButton?.addEventListener('click', closeModal);
 prevRoundButton?.addEventListener('click', () => {
@@ -262,6 +269,7 @@ form?.addEventListener('submit', event => {
   openConfirmModal(payload);
 });
 
+// ==================== ACCIONES SECUNDARIAS ====================
 cancelCreateButton?.addEventListener('click', () => {
   closeConfirmModal();
   pendingPayload = null;
@@ -288,4 +296,5 @@ resetFormButton?.addEventListener('click', () => {
   setFeedback('Formulario limpiado correctamente.', 'success');
 });
 
+// ==================== INICIALIZACION ====================
 loadCurrentRound();

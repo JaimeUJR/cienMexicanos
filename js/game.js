@@ -1,5 +1,7 @@
+// ==================== ESTADO MODULO ====================
 let state = null;
 
+// ==================== FACTORY DE PARTIDA ====================
 window.createGameState = function(payload) {
   const gameId = window.generateId();
   const teams = [
