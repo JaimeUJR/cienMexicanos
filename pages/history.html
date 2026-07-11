@@ -1,14 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/resetAndConstants.css">
+    <link rel="stylesheet" href="../css/history.css">
     <title>Historial</title>
 </head>
 
 <body>
+    <main class="history-page">
+        <header class="history-header">
+            <h1>Historial de Partidas</h1>
+            <div class="header-actions">
+                <button id="btn-clear-history" class="btn btn-danger" type="button">Limpiar Historial</button>
+                <a href="../index.html" class="btn btn-home">Inicio</a>
+            </div>
+        </header>
 
+        <section id="history-container" class="history-list">
+            <!-- Render dinámico -->
+        </section>
+    </main>
+
+    <script src="../js/storage.js"></script>
+    <script src="../js/history.js"></script>
 </body>
 
 </html>

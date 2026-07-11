@@ -17,7 +17,7 @@
         <!-- Contenedor principal del juego -->
         <div class="game-board">
             <!-- Panel izquierdo - Equipo 1 -->
-            <div class="team-panel team-left">
+            <div class="team-panel team-left" id="team-panel-0">
                 <div style="flex: 1; min-height: 124px;"></div>
                 <div class="team-badge">
                     <span class="badge-score" id="team1-score">000</span>
@@ -82,7 +82,7 @@
             </div>
 
             <!-- Panel derecho - Equipo 2 -->
-            <div class="team-panel team-right">
+            <div class="team-panel team-right" id="team-panel-1">
                 <div style="flex: 1; min-height: 124px;"></div>
                 <div class="team-badge">
                     <span class="badge-score" id="team2-score">000</span>
@@ -122,6 +122,17 @@
                 <h2>Partida en Pausa</h2>
                 <p>La partida esta pausada. Presiona para continuar.</p>
                 <button class="btn-primary" id="btn-resume">Reanudar Partida</button>
+            </div>
+        </div>
+
+        <div id="start-team-modal" class="modal hidden">
+            <div class="modal-content start-team-modal-content">
+                <h2>¿Que equipo inicia?</h2>
+                <p>Selecciona el equipo que tendra el primer turno.</p>
+                <div class="start-team-actions">
+                    <button class="btn-primary" id="btn-start-team-0">Equipo 1</button>
+                    <button class="btn-modal-secondary" id="btn-start-team-1">Equipo 2</button>
+                </div>
             </div>
         </div>
     </main>

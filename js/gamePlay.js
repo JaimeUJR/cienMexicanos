@@ -5,6 +5,7 @@ let gameState = {
     pendingHistoryEntry: null,
     resultSaved: false,
     currentRoundIndex: 0,
+    startingTeamIndex: 0,
     currentTeamIndex: 0,
     roundScore: 0,
     roundStrikes: 0,
@@ -34,23 +35,34 @@ window.initializeGamePlay = function() {
     renderCurrentRound();
     updateStrikeDisplay();
     hideStealBanner();
-    focusAnswerInput();
+    openStartTeamModal();
 };
 
 // ==================== UI ====================
 function updateGameUI() {
     const { game, currentRoundIndex, roundScore } = gameState;
 
+    const team1Base = Number(game.teams[0].totalScore) || 0;
+    const team2Base = Number(game.teams[1].totalScore) || 0;
+    const activeTurnTeamIndex = gameState.isStealPhase && gameState.stealTeamIndex !== null
+        ? gameState.stealTeamIndex
+        : gameState.currentTeamIndex;
+
     document.getElementById('team1-name').textContent = game.teams[0].name;
     document.getElementById('team1-total').textContent = `Total: ${game.teams[0].totalScore}`;
-    document.getElementById('team1-score').textContent = String(game.teams[0].totalScore).padStart(3, '0');
+    document.getElementById('team1-score').textContent = String(team1Base).padStart(3, '0');
 
     document.getElementById('team2-name').textContent = game.teams[1].name;
     document.getElementById('team2-total').textContent = `Total: ${game.teams[1].totalScore}`;
-    document.getElementById('team2-score').textContent = String(game.teams[1].totalScore).padStart(3, '0');
+    document.getElementById('team2-score').textContent = String(team2Base).padStart(3, '0');
 
     document.getElementById('current-round-score').textContent = String(roundScore).padStart(3, '0');
     document.getElementById('question-text').textContent = `Pregunta ${currentRoundIndex + 1}`;
+
+    const leftPanel = document.getElementById('team-panel-0');
+    const rightPanel = document.getElementById('team-panel-1');
+    leftPanel?.classList.toggle('active-turn', activeTurnTeamIndex === 0);
+    rightPanel?.classList.toggle('active-turn', activeTurnTeamIndex === 1);
 }
 
 function renderCurrentRound() {
@@ -129,9 +141,10 @@ function startStealPhase() {
 
 function finalizeRound(winnerTeamIndex, message, type = 'success') {
     const winnerTeam = gameState.game.teams[winnerTeamIndex];
-    const pointsWon = gameState.roundScore;
+    const pointsWon = Number(gameState.roundScore) || 0;
+    const winnerBaseScore = Number(winnerTeam?.totalScore) || 0;
 
-    winnerTeam.totalScore += pointsWon;
+    winnerTeam.totalScore = winnerBaseScore + pointsWon;
     gameState.game.updatedAt = new Date().toISOString();
 
     gameState.isStealPhase = false;
@@ -166,6 +179,7 @@ function resolveStealAttempt(inputText) {
         stealMatchedAnswer.revealed = true;
         gameState.roundScore += stealMatchedAnswer.points;
         gameState.revealedAnswerCount++;
+        gameState.potOwnerTeamIndex = stealTeamIndex;
 
         renderCurrentRound();
         updateGameUI();
@@ -179,9 +193,12 @@ function resolveStealAttempt(inputText) {
         return;
     }
 
-    const ownerName = game.teams[potOwnerTeamIndex].name;
+    const ownerIndex = Number.isInteger(potOwnerTeamIndex)
+        ? potOwnerTeamIndex
+        : gameState.currentTeamIndex;
+    const ownerName = game.teams[ownerIndex].name;
     finalizeRound(
-        potOwnerTeamIndex,
+        ownerIndex,
         `Robo fallido. ${ownerName} conserva ${gameState.roundScore} puntos revelados.`,
         'error'
     );
@@ -254,7 +271,7 @@ function endRound() {
 
     if (currentRoundIndex < game.rounds.length - 1) {
         gameState.currentRoundIndex++;
-        gameState.currentTeamIndex = 0;
+        gameState.currentTeamIndex = gameState.startingTeamIndex;
         gameState.roundScore = 0;
         gameState.roundStrikes = 0;
         gameState.revealedAnswerCount = 0;
@@ -267,7 +284,7 @@ function endRound() {
         updateStrikeDisplay();
         updateGameUI();
         renderCurrentRound();
-        focusAnswerInput();
+        openStartTeamModal();
     } else {
         endGame();
     }
@@ -397,7 +414,7 @@ function saveHistoryResultIfNeeded() {
 
 function resetMatchState() {
     gameState.currentRoundIndex = 0;
-    gameState.currentTeamIndex = 0;
+    gameState.currentTeamIndex = gameState.startingTeamIndex;
     gameState.roundScore = 0;
     gameState.roundStrikes = 0;
     gameState.revealedAnswerCount = 0;
@@ -405,7 +422,7 @@ function resetMatchState() {
     gameState.isRoundActive = true;
     gameState.isStealPhase = false;
     gameState.stealTeamIndex = null;
-    gameState.potOwnerTeamIndex = 0;
+    gameState.potOwnerTeamIndex = gameState.startingTeamIndex;
     gameState.pendingHistoryEntry = null;
     gameState.resultSaved = false;
 }
@@ -414,6 +431,7 @@ function replayCurrentGame() {
     saveHistoryResultIfNeeded();
 
     gameState.game = createFreshGameFromTemplate();
+    gameState.startingTeamIndex = 0;
     resetMatchState();
 
     window.saveCurrentGame(gameState.game);
@@ -424,7 +442,7 @@ function replayCurrentGame() {
     updateGameUI();
     renderCurrentRound();
     updateStrikeDisplay();
-    focusAnswerInput();
+    openStartTeamModal();
 }
 
 function openPauseModal() {
@@ -435,6 +453,32 @@ function openPauseModal() {
 function closePauseModal() {
     gameState.isPaused = false;
     document.getElementById('pause-modal').classList.add('hidden');
+    focusAnswerInput();
+}
+
+function openStartTeamModal() {
+    gameState.isPaused = true;
+    document.getElementById('start-team-modal').classList.remove('hidden');
+
+    const team0Name = gameState.game.teams?.[0]?.name || 'Equipo 1';
+    const team1Name = gameState.game.teams?.[1]?.name || 'Equipo 2';
+    const btn0 = document.getElementById('btn-start-team-0');
+    const btn1 = document.getElementById('btn-start-team-1');
+    const title = document.querySelector('#start-team-modal h2');
+    const roundLabel = gameState.currentRoundIndex + 1;
+    if (btn0) btn0.textContent = team0Name;
+    if (btn1) btn1.textContent = team1Name;
+    if (title) title.textContent = `¿Que equipo inicia la ronda ${roundLabel}?`;
+}
+
+function setStartingTeam(index) {
+    gameState.startingTeamIndex = index;
+    gameState.currentTeamIndex = index;
+    gameState.potOwnerTeamIndex = index;
+    gameState.isPaused = false;
+
+    document.getElementById('start-team-modal').classList.add('hidden');
+    updateGameUI();
     focusAnswerInput();
 }
 
@@ -473,33 +517,65 @@ function focusAnswerInput() {
 document.addEventListener('DOMContentLoaded', function() {
     window.initializeGamePlay();
 
-    document.getElementById('answer-input').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter' && this.value.trim()) {
-            handleAnswerSubmission(this.value);
-        }
-    });
+    const answerInput = document.getElementById('answer-input');
+    if (answerInput) {
+        answerInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && this.value.trim()) {
+                handleAnswerSubmission(this.value);
+            }
+        });
+    }
 
-    document.getElementById('btn-continue-modal').addEventListener('click', function() {
-        document.getElementById('round-end-modal').classList.add('hidden');
-        endRound();
-    });
+    const btnContinueRound = document.getElementById('btn-continue-modal');
+    if (btnContinueRound) {
+        btnContinueRound.addEventListener('click', function() {
+            document.getElementById('round-end-modal').classList.add('hidden');
+            endRound();
+        });
+    }
 
-    document.getElementById('btn-back-home').addEventListener('click', function() {
-        saveHistoryResultIfNeeded();
-        window.location.href = '../index.html';
-    });
+    const btnBackHome = document.getElementById('btn-back-home');
+    if (btnBackHome) {
+        btnBackHome.addEventListener('click', function() {
+            saveHistoryResultIfNeeded();
+            window.location.href = '../index.html';
+        });
+    }
 
-    document.getElementById('btn-replay').addEventListener('click', function() {
-        replayCurrentGame();
-    });
+    const btnReplay = document.getElementById('btn-replay');
+    if (btnReplay) {
+        btnReplay.addEventListener('click', function() {
+            replayCurrentGame();
+        });
+    }
 
-    document.getElementById('btn-pause').addEventListener('click', function() {
-        openPauseModal();
-    });
+    const btnPause = document.getElementById('btn-pause');
+    if (btnPause) {
+        btnPause.addEventListener('click', function() {
+            openPauseModal();
+        });
+    }
 
-    document.getElementById('btn-resume').addEventListener('click', function() {
-        closePauseModal();
-    });
+    const btnResume = document.getElementById('btn-resume');
+    if (btnResume) {
+        btnResume.addEventListener('click', function() {
+            closePauseModal();
+        });
+    }
+
+    const btnStartTeam0 = document.getElementById('btn-start-team-0');
+    if (btnStartTeam0) {
+        btnStartTeam0.addEventListener('click', function() {
+            setStartingTeam(0);
+        });
+    }
+
+    const btnStartTeam1 = document.getElementById('btn-start-team-1');
+    if (btnStartTeam1) {
+        btnStartTeam1.addEventListener('click', function() {
+            setStartingTeam(1);
+        });
+    }
 });
 
 // ==================== ANIMACIONES CSS ====================

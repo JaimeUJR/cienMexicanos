@@ -80,7 +80,7 @@ html {
     position: relative;
     padding-top: 56px;
     padding-bottom: 26px;
-    overflow: hidden;
+    overflow: visible;
 }
 
 /* ==================== TEAM PANELS ==================== */
@@ -92,6 +92,7 @@ html {
     position: relative;
     padding: 0;
     justify-self: start;
+    overflow: visible;
 }
 
 .team-panel.team-left {
@@ -104,6 +105,34 @@ html {
     border-right: none;
     padding-right: 0;
     margin-right: 0;
+}
+
+.team-panel.active-turn .team-badge {
+    box-shadow:
+        0 0 18px rgba(255, 255, 255, 0.55),
+        0 0 28px rgba(255, 215, 0, 0.75),
+        inset 0 0 24px rgba(255, 215, 0, 0.25);
+    border-color: #ffe44d;
+}
+
+.team-panel.active-turn .team-badge::after {
+    content: '';
+    position: absolute;
+    inset: -14px;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 228, 77, 0.68);
+    box-shadow:
+        0 0 16px rgba(255, 215, 0, 0.72),
+        0 0 30px rgba(255, 215, 0, 0.55);
+    pointer-events: none;
+}
+
+.team-panel.active-turn .team-info h3 {
+    color: #d9ffea;
+    text-shadow:
+        0 0 14px rgba(0, 255, 140, 0.75),
+        0 0 28px rgba(0, 178, 90, 0.55),
+        1px 1px 0 rgba(0, 0, 0, 0.95);
 }
 
 .team-badge {
@@ -648,6 +677,23 @@ html {
     margin: 0 0 24px;
     color: rgba(255, 255, 255, 0.84);
     font-size: 1rem;
+}
+
+.start-team-modal-content {
+    max-width: 560px;
+}
+
+.start-team-modal-content p {
+    margin: 0 0 24px;
+    color: rgba(255, 255, 255, 0.84);
+    font-size: 1rem;
+}
+
+.start-team-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .final-scores {

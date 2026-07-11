@@ -121,7 +121,6 @@
                         </div>
                         <div class="game-card-actions">
                             <button class="btn btn-play" data-game-id="${game.id}">Jugar</button>
-                            <button class="btn btn-hide" data-game-id="${game.id}">Ocultar</button>
                         </div>
                     </div>
                 `;
@@ -136,15 +135,6 @@
                     }
                     window.setActiveGame(gameId);
                     window.location.href = './pages/game.html';
-                });
-            });
-
-            // Agregar event listeners a los botones de ocultar
-            document.querySelectorAll('.btn-hide').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const gameId = this.dataset.gameId;
-                    // TODO: Implementar funcionalidad de ocultar
-                    alert('Funcionalidad de ocultar (próximamente)');
                 });
             });
         }
