@@ -312,6 +312,23 @@ body {
     gap: 8px;
 }
 
+.round-modal-feedback {
+    margin: 12px 0 0;
+    min-height: 24px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #ffd6ec;
+    background: rgba(230, 0, 136, 0.18);
+    border: 1px solid rgba(230, 0, 136, 0.38);
+    display: none;
+}
+
+.round-modal-feedback.show {
+    display: block;
+}
+
 .confirm-summary {
     display: flex;
     flex-direction: column;

@@ -5,6 +5,7 @@ const openModalButton = document.getElementById('open-answer-modal');
 const closeModalButton = document.getElementById('close-answer-modal');
 const saveAnswerButton = document.getElementById('save-answer');
 const answerModal = document.getElementById('answer-modal');
+const roundModalFeedback = document.getElementById('round-modal-feedback');
 const prevRoundButton = document.getElementById('prev-round');
 const nextRoundButton = document.getElementById('next-round');
 const roundTitle = document.getElementById('round-title');
@@ -44,6 +45,12 @@ function restoreDefaultDescription() {
   descriptionText.className = '';
 }
 
+function setRoundModalFeedback(message = '') {
+  if (!roundModalFeedback) return;
+  roundModalFeedback.textContent = message;
+  roundModalFeedback.classList.toggle('show', Boolean(message));
+}
+
 function getRoundCount() {
   const value = Number(roundsCountInput?.value || 1);
   return Number.isInteger(value) && value > 0 ? value : 1;
@@ -60,6 +67,29 @@ function saveCurrentRound() {
     });
   }
   roundsData[currentRound - 1] = entries;
+}
+
+function getRoundPointsTotal(entries) {
+  return (entries || []).reduce((sum, entry) => sum + (Number(entry?.points) || 0), 0);
+}
+
+function validateRoundPointsLimit(entries, roundNumber = currentRound) {
+  const totalPoints = getRoundPointsTotal(entries);
+  if (totalPoints > 100) {
+    return `La suma de puntos de la ronda ${roundNumber} no puede sobrepasar 100 (actual: ${totalPoints}).`;
+  }
+  return '';
+}
+
+function validateAllRoundsPointsLimit(payload) {
+  const rounds = Array.isArray(payload?.roundsData) ? payload.roundsData : [];
+  for (let index = 0; index < rounds.length; index += 1) {
+    const error = validateRoundPointsLimit(rounds[index], index + 1);
+    if (error) {
+      return error;
+    }
+  }
+  return '';
 }
 
 function loadCurrentRound() {
@@ -82,6 +112,7 @@ function openModal() {
   const roundCount = getRoundCount();
   currentRound = Math.min(currentRound, roundCount);
   loadCurrentRound();
+  setRoundModalFeedback('');
   answerModal?.classList.add('open');
   answerModal?.setAttribute('aria-hidden', 'false');
 }
@@ -89,6 +120,7 @@ function openModal() {
 function closeModal() {
   answerModal?.classList.remove('open');
   answerModal?.setAttribute('aria-hidden', 'true');
+  setRoundModalFeedback('');
 }
 
 function openConfirmModal(payload) {
@@ -157,6 +189,7 @@ prevRoundButton?.addEventListener('click', () => {
     saveCurrentRound();
     currentRound -= 1;
     loadCurrentRound();
+    setRoundModalFeedback('');
   }
 });
 nextRoundButton?.addEventListener('click', () => {
@@ -165,10 +198,28 @@ nextRoundButton?.addEventListener('click', () => {
     saveCurrentRound();
     currentRound += 1;
     loadCurrentRound();
+    setRoundModalFeedback('');
   }
 });
 saveAnswerButton?.addEventListener('click', () => {
-  saveCurrentRound();
+  const entries = [];
+  for (let index = 1; index <= 5; index += 1) {
+    const answerInput = document.getElementById(`answer-${index}`);
+    const pointsInput = document.getElementById(`points-${index}`);
+    entries.push({
+      text: answerInput?.value.trim() || '',
+      points: Number(pointsInput?.value || 0)
+    });
+  }
+
+  const roundError = validateRoundPointsLimit(entries);
+  if (roundError) {
+    setRoundModalFeedback(roundError);
+    return;
+  }
+
+  setRoundModalFeedback('');
+  roundsData[currentRound - 1] = entries;
   closeModal();
   setFeedback(`Respuestas de la ronda ${currentRound} guardadas.`, 'success');
 });
@@ -200,6 +251,13 @@ form?.addEventListener('submit', event => {
   }
 
   saveCurrentRound();
+
+  const roundsValidationError = validateAllRoundsPointsLimit(payload);
+  if (roundsValidationError) {
+    setFeedback(roundsValidationError, 'error');
+    return;
+  }
+
   pendingPayload = payload;
   openConfirmModal(payload);
 });
