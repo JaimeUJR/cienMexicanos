@@ -10,12 +10,15 @@ let gameState = {
     roundStrikes: 0,
     revealedAnswerCount: 0,
     answeredCorrectly: false,
-    isRoundActive: true
+    isRoundActive: true,
+    isPaused: false,
+    isStealPhase: false,
+    stealTeamIndex: null,
+    potOwnerTeamIndex: 0
 };
 
-// ==================== INICIALIZACIÓN ====================
+// ==================== INICIALIZACION ====================
 window.initializeGamePlay = function() {
-    // Cargar el juego activo
     window.initializeStorage();
     gameState.game = window.getActiveGame();
 
@@ -27,26 +30,17 @@ window.initializeGamePlay = function() {
 
     gameState.gameTemplate = createReplayTemplate(gameState.game);
 
-    // Inicializar interfaz
     updateGameUI();
     renderCurrentRound();
     updateStrikeDisplay();
+    hideStealBanner();
     focusAnswerInput();
 };
 
-// ==================== ACTUALIZAR UI ====================
+// ==================== UI ====================
 function updateGameUI() {
-    const { game, currentRoundIndex, currentTeamIndex, roundScore } = gameState;
-    const currentTeam = game.teams[currentTeamIndex];
-    const otherTeam = game.teams[1 - currentTeamIndex];
-    const round = game.rounds[currentRoundIndex];
+    const { game, currentRoundIndex, roundScore } = gameState;
 
-    // Header removido - elementos no existen
-    // document.getElementById('game-title').textContent = game.name;
-    // document.getElementById('round-info').textContent = 
-    //     `Ronda ${currentRoundIndex + 1} de ${game.rounds.length} • ${currentTeam.name}`;
-
-    // Actualizar equipos
     document.getElementById('team1-name').textContent = game.teams[0].name;
     document.getElementById('team1-total').textContent = `Total: ${game.teams[0].totalScore}`;
     document.getElementById('team1-score').textContent = String(game.teams[0].totalScore).padStart(3, '0');
@@ -55,14 +49,10 @@ function updateGameUI() {
     document.getElementById('team2-total').textContent = `Total: ${game.teams[1].totalScore}`;
     document.getElementById('team2-score').textContent = String(game.teams[1].totalScore).padStart(3, '0');
 
-    // Actualizar marcador de ronda actual
     document.getElementById('current-round-score').textContent = String(roundScore).padStart(3, '0');
-
-    // Actualizar pregunta
     document.getElementById('question-text').textContent = `Pregunta ${currentRoundIndex + 1}`;
 }
 
-// ==================== RENDERIZAR RESPUESTAS ====================
 function renderCurrentRound() {
     const { game, currentRoundIndex } = gameState;
     const round = game.rounds[currentRoundIndex];
@@ -72,8 +62,6 @@ function renderCurrentRound() {
         const classes = ['answer-item'];
         if (answer.revealed) {
             classes.push('revealed');
-        } else if (answer.isCorrect === false && answer.revealed === true) {
-            classes.push('incorrect');
         }
 
         return `
@@ -88,6 +76,35 @@ function renderCurrentRound() {
     }).join('');
 }
 
+function updateStrikeDisplay() {
+    const marks = document.querySelectorAll('#strike-count .strike-mark');
+    marks.forEach((mark, index) => {
+        mark.classList.toggle('active', index < gameState.roundStrikes);
+    });
+}
+
+function showStrikeBurst() {
+    const burst = document.getElementById('strike-burst');
+    if (!burst) return;
+
+    burst.classList.remove('show');
+    void burst.offsetWidth;
+    burst.classList.add('show');
+}
+
+function showStealBanner() {
+    const banner = document.getElementById('steal-banner');
+    if (!banner) return;
+    banner.classList.add('show');
+}
+
+function hideStealBanner() {
+    const banner = document.getElementById('steal-banner');
+    if (!banner) return;
+    banner.classList.remove('show');
+}
+
+// ==================== LOGICA BASE ====================
 function normalizeAnswerText(value) {
     return String(value || '')
         .normalize('NFD')
@@ -97,6 +114,196 @@ function normalizeAnswerText(value) {
         .trim();
 }
 
+function startStealPhase() {
+    if (gameState.isStealPhase) {
+        return;
+    }
+
+    gameState.isStealPhase = true;
+    gameState.stealTeamIndex = 1 - gameState.currentTeamIndex;
+    gameState.potOwnerTeamIndex = gameState.currentTeamIndex;
+
+    showStealBanner();
+    showFeedbackMessage('ROBO DE PUNTOS', 'warning');
+}
+
+function finalizeRound(winnerTeamIndex, message, type = 'success') {
+    const winnerTeam = gameState.game.teams[winnerTeamIndex];
+    const pointsWon = gameState.roundScore;
+
+    winnerTeam.totalScore += pointsWon;
+    gameState.game.updatedAt = new Date().toISOString();
+
+    gameState.isStealPhase = false;
+    gameState.stealTeamIndex = null;
+    hideStealBanner();
+
+    updateGameUI();
+    window.saveCurrentGame(gameState.game);
+
+    if (message) {
+        showFeedbackMessage(message, type);
+    }
+
+    setTimeout(() => {
+        endRound();
+    }, 1500);
+}
+
+function resolveStealAttempt(inputText) {
+    const { game, currentRoundIndex, stealTeamIndex, potOwnerTeamIndex } = gameState;
+    const round = game.rounds[currentRoundIndex];
+    const normalizedInput = normalizeAnswerText(inputText);
+
+    const stealMatchedAnswer = round.answers.find(answer => {
+        if (answer.revealed) {
+            return false;
+        }
+        return normalizeAnswerText(answer.text) === normalizedInput;
+    });
+
+    if (stealMatchedAnswer) {
+        stealMatchedAnswer.revealed = true;
+        gameState.roundScore += stealMatchedAnswer.points;
+        gameState.revealedAnswerCount++;
+
+        renderCurrentRound();
+        updateGameUI();
+
+        const teamName = game.teams[stealTeamIndex].name;
+        finalizeRound(
+            stealTeamIndex,
+            `¡Robo exitoso! ${teamName} gana ${gameState.roundScore} puntos (incluyendo la respuesta del robo).`,
+            'success'
+        );
+        return;
+    }
+
+    const ownerName = game.teams[potOwnerTeamIndex].name;
+    finalizeRound(
+        potOwnerTeamIndex,
+        `Robo fallido. ${ownerName} conserva ${gameState.roundScore} puntos revelados.`,
+        'error'
+    );
+}
+
+function handleAnswerSubmission(inputText) {
+    if (gameState.isPaused) {
+        return;
+    }
+
+    const { game, currentRoundIndex, currentTeamIndex } = gameState;
+    const round = game.rounds[currentRoundIndex];
+    const answerInput = document.getElementById('answer-input');
+
+    if (gameState.isStealPhase) {
+        resolveStealAttempt(inputText);
+        answerInput.value = '';
+        focusAnswerInput();
+        return;
+    }
+
+    const normalizedInput = normalizeAnswerText(inputText);
+    const matchedAnswer = round.answers.find(answer => {
+        const normalizedAnswer = normalizeAnswerText(answer.text);
+        return normalizedAnswer.length > 0 && normalizedAnswer === normalizedInput;
+    });
+
+    if (!matchedAnswer) {
+        gameState.roundStrikes++;
+        gameState.answeredCorrectly = false;
+        updateStrikeDisplay();
+        showStrikeBurst();
+
+        answerInput.classList.add('error');
+        setTimeout(() => answerInput.classList.remove('error'), 500);
+
+        if (gameState.roundStrikes >= 3) {
+            startStealPhase();
+        } else {
+            showFeedbackMessage(`Incorrecto. Errores: ${gameState.roundStrikes}/3`, 'error');
+        }
+    } else if (matchedAnswer.revealed) {
+        showFeedbackMessage('Esa respuesta ya fue revelada', 'warning');
+    } else {
+        matchedAnswer.revealed = true;
+        gameState.roundScore += matchedAnswer.points;
+        gameState.revealedAnswerCount++;
+        gameState.answeredCorrectly = true;
+
+        updateGameUI();
+        renderCurrentRound();
+        showFeedbackMessage(`¡Correcto! +${matchedAnswer.points} puntos`, 'success');
+
+        if (gameState.revealedAnswerCount === round.answers.length) {
+            const winnerName = game.teams[currentTeamIndex].name;
+            finalizeRound(
+                currentTeamIndex,
+                `¡Ronda completada! ${winnerName} gana ${gameState.roundScore} puntos.`,
+                'success'
+            );
+        }
+    }
+
+    answerInput.value = '';
+    focusAnswerInput();
+}
+
+function endRound() {
+    const { game, currentRoundIndex } = gameState;
+
+    if (currentRoundIndex < game.rounds.length - 1) {
+        gameState.currentRoundIndex++;
+        gameState.currentTeamIndex = 0;
+        gameState.roundScore = 0;
+        gameState.roundStrikes = 0;
+        gameState.revealedAnswerCount = 0;
+        gameState.answeredCorrectly = false;
+        gameState.isStealPhase = false;
+        gameState.stealTeamIndex = null;
+        gameState.potOwnerTeamIndex = gameState.currentTeamIndex;
+
+        hideStealBanner();
+        updateStrikeDisplay();
+        updateGameUI();
+        renderCurrentRound();
+        focusAnswerInput();
+    } else {
+        endGame();
+    }
+}
+
+function endGame() {
+    const { game } = gameState;
+    const modal = document.getElementById('game-end-modal');
+    const finalScoresDiv = document.getElementById('final-scores');
+
+    const team1Score = game.teams[0].totalScore;
+    const team2Score = game.teams[1].totalScore;
+    const winner = team1Score > team2Score ? 0 : (team2Score > team1Score ? 1 : -1);
+
+    finalScoresDiv.innerHTML = game.teams.map((team, index) => {
+        const isWinner = index === winner;
+        return `
+            <div class="final-score-item ${isWinner ? 'winner' : ''}">
+                ${team.name}: ${team.totalScore} puntos
+                ${isWinner ? ' ✓' : ''}
+            </div>
+        `;
+    }).join('');
+
+    modal.classList.remove('hidden');
+
+    game.status = 'completed';
+    game.updatedAt = new Date().toISOString();
+    window.saveCurrentGame(game);
+
+    gameState.pendingHistoryEntry = buildHistoryEntry();
+    gameState.resultSaved = false;
+    saveHistoryResultIfNeeded();
+}
+
+// ==================== REPLAY + HISTORIAL ====================
 function cloneData(value) {
     return JSON.parse(JSON.stringify(value));
 }
@@ -196,6 +403,9 @@ function resetMatchState() {
     gameState.revealedAnswerCount = 0;
     gameState.answeredCorrectly = false;
     gameState.isRoundActive = true;
+    gameState.isStealPhase = false;
+    gameState.stealTeamIndex = null;
+    gameState.potOwnerTeamIndex = 0;
     gameState.pendingHistoryEntry = null;
     gameState.resultSaved = false;
 }
@@ -210,167 +420,26 @@ function replayCurrentGame() {
     window.setActiveGame(gameState.game.id);
 
     document.getElementById('game-end-modal').classList.add('hidden');
+    hideStealBanner();
     updateGameUI();
     renderCurrentRound();
     updateStrikeDisplay();
     focusAnswerInput();
 }
 
-function updateStrikeDisplay() {
-    const marks = document.querySelectorAll('#strike-count .strike-mark');
-    marks.forEach((mark, index) => {
-        const shouldBeActive = index < gameState.roundStrikes;
-        mark.classList.toggle('active', shouldBeActive);
-    });
+function openPauseModal() {
+    gameState.isPaused = true;
+    document.getElementById('pause-modal').classList.remove('hidden');
 }
 
-function showStrikeBurst() {
-    const burst = document.getElementById('strike-burst');
-    if (!burst) return;
-
-    burst.classList.remove('show');
-    void burst.offsetWidth;
-    burst.classList.add('show');
-}
-
-// ==================== MANEJAR RESPUESTA INGRESADA ====================
-function handleAnswerSubmission(inputText) {
-    const { game, currentRoundIndex, currentTeamIndex } = gameState;
-    const round = game.rounds[currentRoundIndex];
-    const normalizedInput = normalizeAnswerText(inputText);
-
-    // Buscar respuesta correcta con coincidencia exacta normalizada.
-    const matchedAnswer = round.answers.find(answer => {
-        const normalizedAnswer = normalizeAnswerText(answer.text);
-        return normalizedAnswer.length > 0 && normalizedAnswer === normalizedInput;
-    });
-
-    const answerInput = document.getElementById('answer-input');
-
-    if (!matchedAnswer) {
-        // Respuesta incorrecta
-        gameState.roundStrikes++;
-        gameState.answeredCorrectly = false;
-        updateStrikeDisplay();
-        showStrikeBurst();
-
-        // Mostrar feedback visual
-        answerInput.classList.add('error');
-        setTimeout(() => answerInput.classList.remove('error'), 500);
-
-        // Si se alcanzaron 3 strikes, pasar turno
-        if (gameState.roundStrikes >= 3) {
-            showFeedbackMessage(`¡3 Errores! Turno del equipo ${game.teams[1 - currentTeamIndex].name}`, 'error');
-            setTimeout(() => {
-                switchTeam();
-            }, 2000);
-        } else {
-            showFeedbackMessage(`Incorrecto. Errores: ${gameState.roundStrikes}/3`, 'error');
-        }
-    } else if (matchedAnswer.revealed) {
-        // Ya fue revelada
-        showFeedbackMessage('Esa respuesta ya fue revelada', 'warning');
-    } else {
-        // Respuesta correcta
-        matchedAnswer.revealed = true;
-        gameState.roundScore += matchedAnswer.points;
-        gameState.revealedAnswerCount++;
-        gameState.answeredCorrectly = true;
-        game.teams[currentTeamIndex].totalScore += matchedAnswer.points;
-
-        // Actualizar puntuación
-        updateGameUI();
-        renderCurrentRound();
-
-        showFeedbackMessage(`¡Correcto! +${matchedAnswer.points} puntos`, 'success');
-
-        // Verificar si se revelaron todas
-        if (gameState.revealedAnswerCount === round.answers.length) {
-            setTimeout(() => {
-                showFeedbackMessage('¡Ronda completada!', 'success');
-                setTimeout(() => {
-                    endRound();
-                }, 1500);
-            }, 1000);
-        }
-    }
-
-    // Limpiar input
-    answerInput.value = '';
+function closePauseModal() {
+    gameState.isPaused = false;
+    document.getElementById('pause-modal').classList.add('hidden');
     focusAnswerInput();
 }
 
-// ==================== CAMBIAR EQUIPO ====================
-function switchTeam() {
-    gameState.currentTeamIndex = 1 - gameState.currentTeamIndex;
-    gameState.roundStrikes = 0;
-    gameState.roundScore = 0;
-    updateStrikeDisplay();
-    updateGameUI();
-    renderCurrentRound();
-    focusAnswerInput();
-}
-
-// ==================== FIN DE RONDA ====================
-function endRound() {
-    const { game, currentRoundIndex } = gameState;
-
-    if (currentRoundIndex < game.rounds.length - 1) {
-        // Siguiente ronda
-        gameState.currentRoundIndex++;
-        gameState.currentTeamIndex = 0;
-        gameState.roundScore = 0;
-        gameState.roundStrikes = 0;
-        gameState.revealedAnswerCount = 0;
-        gameState.answeredCorrectly = false;
-
-        updateStrikeDisplay();
-        updateGameUI();
-        renderCurrentRound();
-        focusAnswerInput();
-    } else {
-        // Fin del juego
-        endGame();
-    }
-}
-
-// ==================== FIN DEL JUEGO ====================
-function endGame() {
-    const { game } = gameState;
-    const modal = document.getElementById('game-end-modal');
-    const finalScoresDiv = document.getElementById('final-scores');
-
-    // Determinar ganador
-    const team1Score = game.teams[0].totalScore;
-    const team2Score = game.teams[1].totalScore;
-    const winner = team1Score > team2Score ? 0 : (team2Score > team1Score ? 1 : -1);
-
-    // Mostrar puntuaciones finales
-    finalScoresDiv.innerHTML = game.teams.map((team, index) => {
-        const isWinner = index === winner;
-        return `
-            <div class="final-score-item ${isWinner ? 'winner' : ''}">
-                ${team.name}: ${team.totalScore} puntos
-                ${isWinner ? ' ✓' : ''}
-            </div>
-        `;
-    }).join('');
-
-    // Mostrar modal
-    modal.classList.remove('hidden');
-
-    game.status = 'completed';
-    game.updatedAt = new Date().toISOString();
-    window.saveCurrentGame(game);
-
-    gameState.pendingHistoryEntry = buildHistoryEntry();
-    gameState.resultSaved = false;
-    saveHistoryResultIfNeeded();
-}
-
-// ==================== MOSTRAR MENSAJE ====================
+// ==================== UTILIDADES ====================
 function showFeedbackMessage(message, type = 'info') {
-    // Crear elemento temporal para feedback
     const feedback = document.createElement('div');
     feedback.className = `feedback-message ${type}`;
     feedback.textContent = message;
@@ -396,50 +465,40 @@ function showFeedbackMessage(message, type = 'info') {
     }, 2000);
 }
 
-// ==================== FOCUS EN INPUT ====================
 function focusAnswerInput() {
     document.getElementById('answer-input').focus();
 }
 
-// ==================== EVENT LISTENERS ====================
+// ==================== EVENTOS ====================
 document.addEventListener('DOMContentLoaded', function() {
     window.initializeGamePlay();
 
-    // Enviar respuesta con botón
-    document.getElementById('submit-answer-btn').addEventListener('click', function() {
-        const input = document.getElementById('answer-input');
-        if (input.value.trim()) {
-            handleAnswerSubmission(input.value);
-        }
-    });
-
-    // Enviar respuesta con Enter
     document.getElementById('answer-input').addEventListener('keypress', function(e) {
         if (e.key === 'Enter' && this.value.trim()) {
             handleAnswerSubmission(this.value);
         }
     });
 
-    // Botón siguiente ronda
-    document.getElementById('btn-next-round').addEventListener('click', function() {
-        endRound();
-    });
-
-    // Botón continuar en modal
     document.getElementById('btn-continue-modal').addEventListener('click', function() {
         document.getElementById('round-end-modal').classList.add('hidden');
         endRound();
     });
 
-    // Botón volver al home
     document.getElementById('btn-back-home').addEventListener('click', function() {
         saveHistoryResultIfNeeded();
         window.location.href = '../index.html';
     });
 
-    // Botón volver a jugar
     document.getElementById('btn-replay').addEventListener('click', function() {
         replayCurrentGame();
+    });
+
+    document.getElementById('btn-pause').addEventListener('click', function() {
+        openPauseModal();
+    });
+
+    document.getElementById('btn-resume').addEventListener('click', function() {
+        closePauseModal();
     });
 });
 

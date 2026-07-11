@@ -18,7 +18,7 @@
         <div class="game-board">
             <!-- Panel izquierdo - Equipo 1 -->
             <div class="team-panel team-left">
-                <div style="flex: 1; min-height: 220px;"></div>
+                <div style="flex: 1; min-height: 124px;"></div>
                 <div class="team-badge">
                     <span class="badge-score" id="team1-score">000</span>
                 </div>
@@ -47,6 +47,8 @@
                         <h2 id="question-text">¿Pregunta 1?</h2>
                     </div>
 
+                    <div class="steal-banner" id="steal-banner" aria-live="polite">ROBO DE PUNTOS</div>
+
                     <!-- Listado de respuestas - OCULTAS -->
                     <div class="answers-area arcade-board">
                         <div class="strike-overlay" id="strike-overlay" aria-live="polite">
@@ -58,33 +60,30 @@
                     </div>
                 </div>
 
-                <!-- Input oculto para respuestas (consola del jugador) -->
-                <div class="player-console">
-                    <input 
-                        type="text" 
-                        id="answer-input" 
-                        class="answer-input-hidden" 
-                        placeholder="Ingresa la respuesta (invisible)"
-                        autocomplete="off"
-                    >
-                    <button id="submit-answer-btn" class="btn-submit-answer">Probar</button>
-                </div>
+                <div class="bottom-controls">
+                    <div class="input-shell">
+                        <input 
+                            type="text" 
+                            id="answer-input" 
+                            class="answer-input-hidden" 
+                            placeholder="Ingresa la respuesta"
+                            autocomplete="off"
+                        >
+                    </div>
 
-                <!-- Botones de control -->
-                <div class="game-controls">
-                    <button class="btn-action" id="btn-next-round" disabled>Siguiente Ronda</button>
-                </div>
+                    <div class="strike-count" id="strike-count" aria-live="polite">
+                        <span class="strike-mark" data-strike-index="1">X</span>
+                        <span class="strike-mark" data-strike-index="2">X</span>
+                        <span class="strike-mark" data-strike-index="3">X</span>
+                    </div>
 
-                <div class="strike-count" id="strike-count" aria-live="polite">
-                    <span class="strike-mark" data-strike-index="1">X</span>
-                    <span class="strike-mark" data-strike-index="2">X</span>
-                    <span class="strike-mark" data-strike-index="3">X</span>
+                    <button class="btn-pause" id="btn-pause">Pausar Partida</button>
                 </div>
             </div>
 
             <!-- Panel derecho - Equipo 2 -->
             <div class="team-panel team-right">
-                <div style="flex: 1; min-height: 220px;"></div>
+                <div style="flex: 1; min-height: 124px;"></div>
                 <div class="team-badge">
                     <span class="badge-score" id="team2-score">000</span>
                 </div>
@@ -115,6 +114,14 @@
                     <button class="btn-primary" id="btn-replay">Volver a Jugar</button>
                     <button class="btn-modal-secondary" id="btn-back-home">Volver al inicio/menu</button>
                 </div>
+            </div>
+        </div>
+
+        <div id="pause-modal" class="modal hidden">
+            <div class="modal-content pause-modal-content">
+                <h2>Partida en Pausa</h2>
+                <p>La partida esta pausada. Presiona para continuar.</p>
+                <button class="btn-primary" id="btn-resume">Reanudar Partida</button>
             </div>
         </div>
     </main>

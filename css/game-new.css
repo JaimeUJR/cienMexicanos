@@ -76,9 +76,10 @@ html {
     max-width: 80%;
     margin: 0 auto;
     width: 80%;
-    align-items: start;
+    align-items: center;
     position: relative;
-    padding-top: 12px;
+    padding-top: 56px;
+    padding-bottom: 26px;
     overflow: hidden;
 }
 
@@ -117,6 +118,7 @@ html {
     box-shadow: 0 0 30px rgba(255, 215, 0, 0.6), inset 0 0 20px rgba(0, 0, 0, 0.9);
     position: relative;
     z-index: 3;
+    transform: translateY(-68px);
 }
 
 .badge-score {
@@ -137,21 +139,21 @@ html {
 
 .team-info {
     text-align: center;
+    transform: translateY(-68px);
 }
 
 .team-info h3 {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--green-bright);
+    font-size: 16px;
+    font-weight: 900;
+    color: #7dffb8;
     margin: 0;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.9px;
+    text-shadow: 0 0 10px rgba(0, 178, 90, 0.65), 1px 1px 0 rgba(0, 0, 0, 0.9);
 }
 
 .total-score {
-    font-size: 11px;
-    color: var(--gray-soft);
-    margin: 2px 0 0 0;
+    display: none;
 }
 
 /* ==================== GAME CONTENT ==================== */
@@ -296,10 +298,10 @@ html {
 /* Área de pregunta */
 .question-area {
     text-align: center;
-    padding: 8px 10px;
+    padding: 18px 10px 10px;
     background: rgba(255, 255, 255, 0.03);
     border-radius: 4px;
-    margin-top: 6px;
+    margin-top: 24px;
 }
 
 .question-area h2 {
@@ -307,6 +309,43 @@ html {
     color: var(--white-pure);
     margin: 0;
     text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.8);
+}
+
+.steal-banner {
+    position: absolute;
+    left: 50%;
+    top: 54%;
+    transform: translate(-50%, -50%) scale(0.94);
+    z-index: 18;
+    opacity: 0;
+    pointer-events: none;
+    font-family: 'Arial Black', sans-serif;
+    font-size: clamp(34px, 5vw, 64px);
+    font-weight: 900;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #ffe44d;
+    text-shadow:
+        0 0 6px rgba(255, 228, 77, 0.85),
+        0 0 16px rgba(255, 215, 0, 0.85),
+        0 0 32px rgba(255, 215, 0, 0.6),
+        2px 2px 0 rgba(0, 0, 0, 0.95);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.steal-banner.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    animation: ledPulse 0.75s ease-in-out infinite;
+}
+
+@keyframes ledPulse {
+    0%, 100% {
+        filter: brightness(0.95);
+    }
+    50% {
+        filter: brightness(1.2);
+    }
 }
 
 /* ==================== TABLERO ARCADE CON LÍNEAS PUNTEADAS ==================== */
@@ -507,93 +546,63 @@ html {
 }
 
 /* ==================== CONSOLA DE JUGADOR ==================== */
-.player-console {
-    display: flex;
-    gap: 8px;
+
+.bottom-controls {
+    display: grid;
+    grid-template-columns: minmax(220px, 25%) auto auto;
+    align-items: end;
+    gap: 18px;
+    margin-top: 8px;
+    justify-content: space-between;
+}
+
+.input-shell {
+    min-width: 0;
 }
 
 .answer-input-hidden {
     flex: 1;
-    padding: 10px 12px;
-    background: rgba(0, 0, 0, 0.5);
-    border: 2px solid var(--green-bright);
-    border-radius: 4px;
-    color: var(--white-pure);
-    font-size: 13px;
+    width: 100%;
+    padding: 10px 2px 8px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid rgba(255, 215, 0, 0.85);
+    border-radius: 0;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 16px;
     font-family: var(--font-family);
+    letter-spacing: 0.4px;
 }
 
 .answer-input-hidden:focus {
     outline: none;
-    border-color: var(--yellow-bright);
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    border-bottom-color: var(--yellow-bright);
+    box-shadow: 0 10px 12px -10px rgba(255, 215, 0, 0.45);
 }
 
-.btn-submit-answer {
-    padding: 10px 16px;
-    background: linear-gradient(135deg, var(--green-bright), #00944f);
-    border: 2px solid var(--green-bright);
-    color: var(--white-pure);
-    font-weight: 700;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 13px;
-    text-transform: uppercase;
+.answer-input-hidden::placeholder {
+    color: rgba(255, 255, 255, 0.42);
 }
 
-.btn-submit-answer:hover:not(:disabled) {
-    background: linear-gradient(135deg, #00d470, var(--green-bright));
-    box-shadow: 0 4px 15px rgba(0, 178, 94, 0.4);
-    transform: translateY(-2px);
-}
-
-.btn-submit-answer:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-/* ==================== BOTONES DE CONTROL ==================== */
-.game-controls {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-}
-
-.btn-action {
+.btn-pause {
     padding: 10px 18px;
     background: linear-gradient(135deg, var(--yellow-bright), #ffed4e);
     border: 2px solid var(--yellow-bright);
     color: #000;
     font-weight: 700;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
     font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    white-space: nowrap;
 }
 
-.btn-action:hover:not(:disabled) {
+.btn-pause:hover {
     background: linear-gradient(135deg, #ffed4e, var(--yellow-bright));
     box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
     transform: translateY(-2px);
-}
-
-.btn-action:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.btn-action.secondary {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: var(--pink-power);
-    color: var(--white-pure);
-}
-
-.btn-action.secondary:hover:not(:disabled) {
-    background: rgba(255, 47, 120, 0.2);
-    box-shadow: 0 4px 15px rgba(255, 47, 120, 0.3);
 }
 
 /* ==================== MODALES ==================== */
@@ -629,6 +638,16 @@ html {
     color: var(--yellow-bright);
     margin: 0 0 20px 0;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.pause-modal-content {
+    max-width: 460px;
+}
+
+.pause-modal-content p {
+    margin: 0 0 24px;
+    color: rgba(255, 255, 255, 0.84);
+    font-size: 1rem;
 }
 
 .final-scores {
@@ -786,6 +805,21 @@ html {
 
     .game-content {
         order: 2;
+    }
+
+    .bottom-controls {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-top: 0;
+    }
+
+    .strike-count {
+        order: 2;
+    }
+
+    .btn-pause {
+        order: 3;
+        width: 100%;
     }
 
     .arcade-border {
@@ -979,22 +1013,12 @@ html {
         font-size: 20px;
     }
 
-    .btn-action {
-        padding: 10px 15px;
-        font-size: 12px;
-    }
-
-    .player-console {
-        flex-direction: column;
-        gap: 8px;
-    }
-
     .answer-input-hidden {
-        padding: 10px 12px;
-        font-size: 12px;
+        padding: 8px 2px 6px;
+        font-size: 14px;
     }
 
-    .btn-submit-answer {
+    .btn-pause {
         padding: 10px 15px;
         font-size: 12px;
     }

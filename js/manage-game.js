@@ -144,6 +144,9 @@ function getStatusLabel(status) {
 // ACCIONES DE JUEGO
 // =============================================
 function playGame(gameId) {
+    if (window.resetGameProgress) {
+        window.resetGameProgress(gameId);
+    }
     window.setActiveGame(gameId);
     window.location.href = './game.html';
 }
