@@ -564,14 +564,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    const btnContinueRound = document.getElementById('btn-continue-modal');
-    if (btnContinueRound) {
-        btnContinueRound.addEventListener('click', function() {
-            document.getElementById('round-end-modal').classList.add('hidden');
-            endRound();
-        });
-    }
-
     const btnBackHome = document.getElementById('btn-back-home');
     if (btnBackHome) {
         btnBackHome.addEventListener('click', function() {

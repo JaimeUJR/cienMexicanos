@@ -239,7 +239,7 @@ form?.addEventListener('submit', event => {
     teamAName: getFieldValue('team-a-name'),
     teamBName: getFieldValue('team-b-name'),
     roundsCount: Number(getFieldValue('rounds-count')),
-    enableDoubleRound: document.getElementById('double-rounds')?.checked || false,
+    enableDoubleRound: false,
     enableSounds: document.getElementById('enable-sounds')?.checked || false,
     roundsData
   };
