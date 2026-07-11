@@ -43,14 +43,6 @@ function renderHistory() {
             return `<span class="score-pill">${teamName}: ${scoreValue}</span>`;
         }).join('');
 
-        const linkedGame = entry.gameId
-            ? (window.getGames().find(game => game.id === entry.gameId) || null)
-            : null;
-
-        const playAgainButton = linkedGame
-            ? `<button class="btn btn-play" data-game-id="${linkedGame.id}">Jugar de nuevo</button>`
-            : '';
-
         return `
             <article class="history-item" data-history-index="${index}">
                 <div class="history-item-header">
@@ -62,26 +54,10 @@ function renderHistory() {
                         <div class="scores">${scoreMarkup || '<span class="score-pill">Sin puntuaciones</span>'}</div>
                         <p class="winner">Ganador: ${escapeHtml(entry.winner || 'No definido')}</p>
                     </div>
-                    ${playAgainButton}
                 </div>
             </article>
         `;
     }).join('');
-
-    container.querySelectorAll('.btn-play').forEach(button => {
-        button.addEventListener('click', function() {
-            const gameId = this.dataset.gameId;
-            if (!gameId) {
-                return;
-            }
-
-            if (window.resetGameProgress) {
-                window.resetGameProgress(gameId);
-            }
-            window.setActiveGame(gameId);
-            window.location.href = './game.html';
-        });
-    });
 }
 
 function confirmClearHistory() {
