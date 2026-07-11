@@ -1,5 +1,6 @@
 @import url('resetAndConstants.css');
 
+/* ==================== PAGE BASE ==================== */
 html,
 body {
     min-height: 100%;
@@ -14,6 +15,7 @@ body {
     padding: 32px 16px;
 }
 
+/* ==================== PAGE DECORATION ==================== */
 .manage-page {
     max-width: 1100px;
     margin: 0 auto;
@@ -51,6 +53,7 @@ body {
     z-index: 1;
 }
 
+/* ==================== HEADER ==================== */
 .manage-header {
     margin-bottom: 24px;
     padding: 26px;
@@ -100,6 +103,7 @@ body {
     gap: 20px;
 }
 
+/* ==================== FILTERS ==================== */
 .filter-section {
     display: flex;
     gap: 12px;
@@ -151,6 +155,7 @@ body {
     box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.18);
 }
 
+/* ==================== GAME CARDS ==================== */
 .games-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -328,6 +333,7 @@ body {
     font-size: 1rem;
 }
 
+/* ==================== GENERIC BUTTONS ==================== */
 .btn-primary,
 .btn-secondary,
 .btn-danger {
@@ -370,6 +376,7 @@ body {
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25);
 }
 
+/* ==================== MODALS ==================== */
 .modal {
     position: fixed;
     inset: 0;
@@ -491,6 +498,7 @@ body {
     font-weight: 700;
 }
 
+/* ==================== ANIMATIONS ==================== */
 @keyframes toastSlideIn {
     from {
         opacity: 0;
@@ -502,6 +510,7 @@ body {
     }
 }
 
+/* ==================== RESPONSIVE ==================== */
 @media (max-width: 900px) {
     .games-list {
         grid-template-columns: 1fr;

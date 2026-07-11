@@ -1,3 +1,4 @@
+/* ==================== RESET BASE ==================== */
 * {
     padding: 0;
     margin: 0;
@@ -6,6 +7,7 @@
     text-decoration: none;
 }
 
+/* ==================== TOKENS GLOBALES ==================== */
 :root {
     --blue-electric: #004BFF;
     --blue-marine-dark: #0A1128;
@@ -21,6 +23,7 @@
     --font-family: 'Arial', sans-serif;
 }
 
+/* ==================== FONDO GLOBAL FALLBACK ==================== */
 body {
-    background-color: var(--purple-dark)
+    background-color: var(--purple-dark);
 }
