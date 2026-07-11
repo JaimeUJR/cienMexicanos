@@ -18,6 +18,15 @@ let gameState = {
     potOwnerTeamIndex: 0
 };
 
+const soundBank = {
+    start: new Audio('../sources/sounds/a-jugar-100-mexicanos-dijeron_uzh3r4B.mp3'),
+    correct: new Audio('../sources/sounds/correcto-100-mexicanos-dijeron.mp3'),
+    incorrect: new Audio('../sources/sounds/incorrecto-100-mexicanos-dijeron.mp3'),
+    win: new Audio('../sources/sounds/triunfo-100-mexicanos-dijeron.mp3')
+};
+
+let hasPlayedStartSound = false;
+
 // ==================== INICIALIZACION ====================
 window.initializeGamePlay = function() {
     window.initializeStorage();
@@ -37,6 +46,26 @@ window.initializeGamePlay = function() {
     hideStealBanner();
     openStartTeamModal();
 };
+
+function isSoundEnabled() {
+    return Boolean(gameState.game?.config?.soundEnabled);
+}
+
+function playGameSound(type) {
+    if (!isSoundEnabled()) {
+        return;
+    }
+
+    const sound = soundBank[type];
+    if (!sound) {
+        return;
+    }
+
+    sound.currentTime = 0;
+    sound.play().catch(() => {
+        // Ignore blocked autoplay errors.
+    });
+}
 
 // ==================== UI ====================
 function updateGameUI() {
@@ -153,6 +182,7 @@ function finalizeRound(winnerTeamIndex, message, type = 'success') {
 
     updateGameUI();
     window.saveCurrentGame(gameState.game);
+    playGameSound('win');
 
     if (message) {
         showFeedbackMessage(message, type);
@@ -231,6 +261,7 @@ function handleAnswerSubmission(inputText) {
         gameState.answeredCorrectly = false;
         updateStrikeDisplay();
         showStrikeBurst();
+        playGameSound('incorrect');
 
         answerInput.classList.add('error');
         setTimeout(() => answerInput.classList.remove('error'), 500);
@@ -247,6 +278,7 @@ function handleAnswerSubmission(inputText) {
         gameState.roundScore += matchedAnswer.points;
         gameState.revealedAnswerCount++;
         gameState.answeredCorrectly = true;
+        playGameSound('correct');
 
         updateGameUI();
         renderCurrentRound();
@@ -431,6 +463,7 @@ function replayCurrentGame() {
     saveHistoryResultIfNeeded();
 
     gameState.game = createFreshGameFromTemplate();
+    hasPlayedStartSound = false;
     gameState.startingTeamIndex = 0;
     resetMatchState();
 
@@ -476,6 +509,11 @@ function setStartingTeam(index) {
     gameState.currentTeamIndex = index;
     gameState.potOwnerTeamIndex = index;
     gameState.isPaused = false;
+
+    if (!hasPlayedStartSound && gameState.currentRoundIndex === 0) {
+        playGameSound('start');
+        hasPlayedStartSound = true;
+    }
 
     document.getElementById('start-team-modal').classList.add('hidden');
     updateGameUI();
